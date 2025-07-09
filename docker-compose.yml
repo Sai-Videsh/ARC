@@ -1,0 +1,30 @@
+version: '3'
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: public/Dockerfile.frontend
+    ports:
+      - "8080:80"
+
+  backend:
+    build:
+      context: .
+      dockerfile: server/Dockerfile.backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/arc-db
+      - PORT=5000
+
+  mongo:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

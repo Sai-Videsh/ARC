@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARC Air Purifiers | Sign In</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+    
+    :root {
+      /* Light Theme */
+      --light-bg: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+      --light-card-bg: #ffffff;
+      --light-text: #333333;
+      --light-text-secondary: #666666;
+      --light-accent: #000000;
+      --light-border: #dddddd;
+      --light-shadow: rgba(0, 0, 0, 0.08);
+      --light-input-bg: #fafafa;
+      --light-icon: #777777;
+      --light-divider: #dddddd;
+      --light-error: #d32f2f;
+      --light-footer-bg: #ffffff;
+      --light-footer-text: #666666;
+      
+      /* Dark Theme */
+      --dark-bg: linear-gradient(135deg, #121212 0%, #1a1a1a 100%);
+      --dark-card-bg: #1e1e1e;
+      --dark-text: #f0f0f0;
+      --dark-text-secondary: #aaaaaa;
+      --dark-accent: #ffffff;
+      --dark-border: #333333;
+      --dark-shadow: rgba(0, 0, 0, 0.3);
+      --dark-input-bg: #2a2a2a;
+      --dark-icon: #aaaaaa;
+      --dark-divider: #444444;
+      --dark-error: #ff6b6b;
+      --dark-footer-bg: #121212;
+      --dark-footer-text: #aaaaaa;
+    }
+    
+    body {
+      background: var(--light-bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      color: var(--light-text);
+    }
+    
+    body.dark-theme {
+      background: var(--dark-bg);
+      color: var(--dark-text);
+    }
+    
+    /* Air visualization effect */
+    .air-visualization {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+      overflow: hidden;
+    }
+    
+    .air-bubble {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      animation: float 15s infinite linear;
+    }
+    
+    .dark-theme .air-bubble {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.5;
+      }
+      90% {
+        opacity: 0.2;
+      }
+      100% {
+        transform: translateY(-100px) translateX(calc(100vw * var(--x-offset)));
+        opacity: 0;
+      }
+    }
+    
+    /* Header Styles */
+    header {
+      background: var(--light-card-bg);
+      padding: 18px 5%;
+      box-shadow: 0 4px 12px var(--light-shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .dark-theme header {
+      background: var(--dark-card-bg);
+      box-shadow: 0 4px 12px var(--dark-shadow);
+    }
+    
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--light-accent);
+      text-decoration: none;
+      letter-spacing: -1px;
+    }
+    
+    .dark-theme .logo {
+      color: var(--dark-accent);
+    }
+    
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 28px;
+    }
+    
+    .nav-links a {
+      text-decoration: none;
+      color: var(--light-text-secondary);
+      font-weight: 500;
+      position: relative;
+      padding: 5px 0;
+      transition: all 0.3s ease;
+    }
+    
+    .dark-theme .nav-links a {
+      color: var(--dark-text-secondary);
+    }
+    
+    .nav-links a:hover {
+      color: var(--light-accent);
+    }
+    
+    .dark-theme .nav-links a:hover {
+      color: var(--dark-accent);
+    }
+    
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--light-accent);
+      transition: width 0.3s ease;
+    }
+    
+    .dark-theme .nav-links a::after {
+      background: var(--dark-accent);
+    }
+    
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+    
+    .nav-buttons {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    
+    .theme-toggle {
+      background: none;
+      border: none;
+      color: var(--light-icon);
+      font-size: 1.2rem;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+    
+    .theme-toggle:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--light-accent);
+    }
+    
+    .dark-theme .theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--dark-accent);
+    }
+    
+    .nav-btn {
+      padding: 10px 20px;
+      background: var(--light-card-bg);
+      color: var(--light-accent);
+      border: 2px solid var(--light-accent);
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .dark-theme .nav-btn {
+      background: var(--dark-card-bg);
+      color: var(--dark-accent);
+      border: 2px solid var(--dark-accent);
+    }
+    
+    .nav-btn:hover {
+      background: var(--light-accent);
+      color: var(--light-card-bg);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--light-shadow);
+    }
+    
+    .dark-theme .nav-btn:hover {
+      background: var(--dark-accent);
+      color: var(--dark-card-bg);
+      box-shadow: 0 4px 12px var(--dark-shadow);
+    }
+    
+    .nav-btn.active {
+      background: var(--light-accent);
+      color: var(--light-card-bg);
+    }
+    
+    .dark-theme .nav-btn.active {
+      background: var(--dark-accent);
+      color: var(--dark-card-bg);
+    }
+    
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      position: relative;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: var(--light-card-bg);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 
+        0 10px 30px var(--light-shadow),
+        0 0 0 1px rgba(0,0,0,0.03);
+      position: relative;
+      z-index: 10;
+    }
+    
+    .dark-theme .container {
+      background: var(--dark-card-bg);
+      box-shadow: 
+        0 10px 30px var(--dark-shadow),
+        0 0 0 1px rgba(255,255,255,0.05);
+    }
+    
+    .design-strip {
+      height: 8px;
+      background: linear-gradient(90deg, var(--light-accent), #333333);
+    }
+    
+    .dark-theme .design-strip {
+      background: linear-gradient(90deg, var(--dark-accent), #666666);
+    }
+    
+    .form-container {
+      padding: 50px 40px;
+    }
+    
+    .form-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .form-header h2 {
+      font-size: 2.2rem;
+      color: var(--light-accent);
+      margin-bottom: 12px;
+      position: relative;
+      display: inline-block;
+    }
+    
+    .dark-theme .form-header h2 {
+      color: var(--dark-accent);
+    }
+    
+    .form-header h2::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 3px;
+      background: var(--light-accent);
+    }
+    
+    .dark-theme .form-header h2::after {
+      background: var(--dark-accent);
+    }
+    
+    .form-header p {
+      color: var(--light-text-secondary);
+      margin-top: 20px;
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+    
+    .dark-theme .form-header p {
+      color: var(--dark-text-secondary);
+    }
+    
+    .form-group {
+      margin-bottom: 28px;
+      position: relative;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: var(--light-text);
+      font-size: 0.95rem;
+    }
+    
+    .dark-theme label {
+      color: var(--dark-text);
+    }
+    
+    .input-with-icon {
+      position: relative;
+    }
+    
+    .input-with-icon i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--light-icon);
+      font-size: 1.1rem;
+    }
+    
+    .dark-theme .input-with-icon i {
+      color: var(--dark-icon);
+    }
+    
+    input {
+      width: 100%;
+      padding: 16px 16px 16px 50px;
+      border: 1px solid var(--light-border);
+      border-radius: 10px;
+      font-size: 1rem;
+      background: var(--light-input-bg);
+      transition: all 0.3s ease;
+      color: var(--light-text);
+    }
+    
+    .dark-theme input {
+      border: 1px solid var(--dark-border);
+      background: var(--dark-input-bg);
+      color: var(--dark-text);
+    }
+    
+    input:focus {
+      border-color: var(--light-icon);
+      outline: none;
+      background: var(--light-card-bg);
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.03);
+    }
+    
+    .dark-theme input:focus {
+      border-color: var(--dark-icon);
+      background: var(--dark-card-bg);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.05);
+    }
+    
+    .password-toggle {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--light-icon);
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+    
+    .dark-theme .password-toggle {
+      color: var(--dark-icon);
+    }
+    
+    .password-toggle:hover {
+      color: var(--light-accent);
+    }
+    
+    .dark-theme .password-toggle:hover {
+      color: var(--dark-accent);
+    }
+    
+    #signin-message {
+      display: block;
+      margin: 10px 0 20px;
+      color: var(--light-error);
+      font-size: 0.9rem;
+      text-align: center;
+      min-height: 20px;
+    }
+    
+    .dark-theme #signin-message {
+      color: var(--dark-error);
+    }
+    
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--light-accent);
+      color: var(--light-card-bg);
+      border: none;
+      border-radius: 10px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .dark-theme .submit-btn {
+      background: var(--dark-accent);
+      color: var(--dark-card-bg);
+    }
+    
+    .submit-btn:hover {
+      background: var(--light-text);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px var(--light-shadow);
+    }
+    
+    .dark-theme .submit-btn:hover {
+      background: #e0e0e0;
+      box-shadow: 0 4px 15px var(--dark-shadow);
+    }
+    
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+    
+    .submit-btn.loading {
+      color: transparent !important;
+    }
+    
+    .submit-btn .spinner {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .dark-theme .submit-btn .spinner {
+      border: 3px solid rgba(0, 0, 0, 0.3);
+      border-top-color: black;
+    }
+    
+    .submit-btn.loading .spinner {
+      opacity: 1;
+    }
+    
+    .submit-btn .icon {
+      transition: opacity 0.3s;
+    }
+    
+    .submit-btn.loading .icon {
+      opacity: 0;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .form-footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 0.95rem;
+      color: var(--light-text-secondary);
+    }
+    
+    .dark-theme .form-footer {
+      color: var(--dark-text-secondary);
+    }
+    
+    .form-footer a {
+      color: var(--light-accent);
+      text-decoration: none;
+      font-weight: 600;
+      position: relative;
+    }
+    
+    .dark-theme .form-footer a {
+      color: var(--dark-accent);
+    }
+    
+    .form-footer a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: var(--light-accent);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s;
+    }
+    
+    .dark-theme .form-footer a::after {
+      background: var(--dark-accent);
+    }
+    
+    .form-footer a:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+    
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 30px 0;
+      color: var(--light-icon);
+    }
+    
+    .dark-theme .divider {
+      color: var(--dark-icon);
+    }
+    
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--light-divider);
+    }
+    
+    .dark-theme .divider::before,
+    .dark-theme .divider::after {
+      background: var(--dark-divider);
+    }
+    
+    .divider span {
+      padding: 0 15px;
+      font-size: 0.9rem;
+    }
+    
+    .social-login {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    
+    .social-btn {
+      flex: 1;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid var(--light-border);
+      background: var(--light-card-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: var(--light-text);
+    }
+    
+    .dark-theme .social-btn {
+      border: 1px solid var(--dark-border);
+      background: var(--dark-card-bg);
+      color: var(--dark-text);
+    }
+    
+    .social-btn:hover {
+      border-color: var(--light-icon);
+      background: var(--light-input-bg);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px var(--light-shadow);
+    }
+    
+    .dark-theme .social-btn:hover {
+      border-color: var(--dark-icon);
+      background: var(--dark-input-bg);
+      box-shadow: 0 4px 10px var(--dark-shadow);
+    }
+    
+    /* Purifier icon animation */
+    .purifier-icon {
+      text-align: center;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    
+    .purifier-icon i {
+      font-size: 3rem;
+      color: var(--light-accent);
+      position: relative;
+      animation: spin-slow 8s linear infinite;
+    }
+    
+    .dark-theme .purifier-icon i {
+      color: var(--dark-accent);
+    }
+    
+    .purifier-icon::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.05);
+      animation: pulse 2s infinite;
+      z-index: -1;
+    }
+    
+    .dark-theme .purifier-icon::after {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0.7;
+      }
+      50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0.3;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0.7;
+      }
+    }
+    
+    @keyframes spin-slow {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Enhanced loading animation */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    
+    .loading-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    
+    .loading-content {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .dark-theme .loading-content {
+      background: var(--dark-card-bg);
+    }
+    
+    .loading-spinner {
+      width: 60px;
+      height: 60px;
+      border: 5px solid rgba(0, 0, 0, 0.1);
+      border-top-color: var(--light-accent);
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      animation: spin 1s linear infinite;
+    }
+    
+    .dark-theme .loading-spinner {
+      border-top-color: var(--dark-accent);
+    }
+    
+    .loading-content h3 {
+      margin-bottom: 15px;
+      color: var(--light-text);
+    }
+    
+    .dark-theme .loading-content h3 {
+      color: var(--dark-text);
+    }
+    
+    .loading-content p {
+      color: var(--light-text-secondary);
+      line-height: 1.6;
+    }
+    
+    .dark-theme .loading-content p {
+      color: var(--dark-text-secondary);
+    }
+    
+    .air-flow {
+      margin-top: 20px;
+      font-size: 2.5rem;
+      animation: float-up 2s infinite ease-in-out;
+    }
+    
+    @keyframes float-up {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    /* Footer */
+    footer {
+      background: var(--light-footer-bg);
+      padding: 25px 5%;
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--light-footer-text);
+      margin-top: auto;
+      box-shadow: 0 -4px 12px var(--light-shadow);
+    }
+    
+    .dark-theme footer {
+      background: var(--dark-footer-bg);
+      color: var(--dark-footer-text);
+      box-shadow: 0 -4px 12px var(--dark-shadow);
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+    
+    .footer-links a {
+      color: var(--light-footer-text);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    
+    .dark-theme .footer-links a {
+      color: var(--dark-footer-text);
+    }
+    
+    .footer-links a:hover {
+      color: var(--light-accent);
+    }
+    
+    .dark-theme .footer-links a:hover {
+      color: var(--dark-accent);
+    }
+    
+    .copyright {
+      margin-top: 10px;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      header {
+        padding: 15px 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+      
+      .nav-links {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        margin-top: 15px;
+        gap: 20px;
+      }
+      
+      .form-container {
+        padding: 40px 30px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .nav-btn span {
+        display: none;
+      }
+      
+      .nav-btn i {
+        margin-right: 0;
+      }
+      
+      .social-login {
+        flex-direction: column;
+      }
+      
+      .form-container {
+        padding: 35px 25px;
+      }
+      
+      .nav-links {
+        gap: 15px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body class="light-theme">
+  <!-- Air visualization effect -->
+  <div class="air-visualization" id="air-visualization"></div>
+  
+  <!-- Loading overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <h3>Cleaning the Air</h3>
+      <p>Signing you in securely...</p>
+      <div class="air-flow">
+        <i class="fas fa-wind"></i>
+      </div>
+    </div>
+  </div>
+  
+  <header>
+    <a href="#" class="logo">ARC</a>
+    
+    <ul class="nav-links">
+      <li><a href="#products">Products</a></li>
+      <li><a href="#technology">Technology</a></li>
+      <li><a href="#reviews">Reviews</a></li>
+      <li><a href="#support">Support</a></li>
+    </ul>
+    
+    <div class="nav-buttons">
+      <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+      </button>
+      <button class="nav-btn" onclick="openSignupPage()">
+        <i class="fas fa-user-plus"></i>
+        <span>Sign Up</span>
+      </button>
+      <button class="nav-btn active">
+        <i class="fas fa-sign-in-alt"></i>
+        <span>Sign In</span>
+      </button>
+    </div>
+  </header>
+  
+  <section class="main-content">
+    <div class="container">
+      <div class="design-strip"></div>
+      <div class="form-container">
+        <div class="purifier-icon">
+          <i class="fas fa-fan"></i>
+        </div>
+        
+        <div class="form-header">
+          <h2>Sign In</h2>
+          <p>Access your account to manage purifiers, orders, and preferences</p>
+        </div>
+        
+        <form id="signinForm">
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <div class="input-with-icon">
+              <i class="fas fa-envelope"></i>
+              <input type="email" id="email" name="email" placeholder="you@example.com" required>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-with-icon">
+              <i class="fas fa-lock"></i>
+              <input type="password" id="password" name="password" placeholder="••••••••" required>
+              <button type="button" class="password-toggle">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="form-footer">
+            <a href="#forgot-password">Forgot password?</a>
+          </div>
+          
+          <span id="signin-message"></span>
+          
+          <button type="submit" class="submit-btn">
+            <span class="spinner"></span>
+            <span class="icon"><i class="fas fa-sign-in-alt"></i></span>
+            <span>Sign In</span>
+          </button>
+          
+          <div class="divider">
+            <span>Or continue with</span>
+          </div>
+          
+          <div class="social-login">
+            <button type="button" class="social-btn">
+              <i class="fab fa-google"></i>
+              Google
+            </button>
+            <button type="button" class="social-btn">
+              <i class="fab fa-apple"></i>
+              Apple
+            </button>
+          </div>
+          
+          <p class="form-footer">
+            Don't have an account? <a href="signup.html">Sign Up</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </section>
+  
+  <footer>
+    <div class="footer-links">
+      <a href="#">Air Quality Standards</a>
+      <a href="#">Technology</a>
+      <a href="#">Support</a>
+      <a href="#">About ARC</a>
+      <a href="#">Careers</a>
+    </div>
+    <p class="copyright">&copy; 2023 ARC Air Purifiers. All rights reserved.</p>
+  </footer>
+  
+  <script>
+    // Create air bubbles for visualization
+    function createAirBubbles() {
+      const container = document.getElementById('air-visualization');
+      const bubbleCount = 15;
+      
+      for (let i = 0; i < bubbleCount; i++) {
+        const bubble = document.createElement('div');
+        bubble.classList.add('air-bubble');
+        
+        // Random size between 20px and 100px
+        const size = Math.floor(Math.random() * 80) + 20;
+        bubble.style.width = `${size}px`;
+        bubble.style.height = `${size}px`;
+        
+        // Random position
+        bubble.style.left = `${Math.random() * 100}%`;
+        bubble.style.setProperty('--x-offset', Math.random() * 0.4 - 0.2);
+        
+        // Random animation duration between 10s and 25s
+        const duration = Math.floor(Math.random() * 15) + 10;
+        bubble.style.animationDuration = `${duration}s`;
+        
+        // Random delay
+        bubble.style.animationDelay = `${Math.random() * 5}s`;
+        
+        container.appendChild(bubble);
+      }
+    }
+    
+    // Toggle password visibility
+    const passwordToggle = document.querySelector('.password-toggle');
+    const passwordInput = document.getElementById('password');
+    
+    passwordToggle.addEventListener('click', () => {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      passwordToggle.innerHTML = type === 'password' ? 
+        '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+    });
+    
+    // Form submission handling
+    document.getElementById('signinForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const messageEl = document.getElementById('signin-message');
+      const submitBtn = document.querySelector('.submit-btn');
+      const loadingOverlay = document.getElementById('loadingOverlay');
+      
+      // Simple validation
+      if (!email || !password) {
+        messageEl.textContent = "Please fill in all fields";
+        return;
+      }
+      
+      // Email validation
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        messageEl.textContent = "Please enter a valid email address";
+        return;
+      }
+      
+      // Password validation
+      if (password.length < 6) {
+        messageEl.textContent = "Password must be at least 6 characters";
+        return;
+      }
+      
+      // Show loading states
+      submitBtn.classList.add('loading');
+      messageEl.textContent = "Authenticating...";
+      messageEl.style.color = document.body.classList.contains('dark-theme') ? "#aaaaaa" : "#555555";
+      
+      // Show enhanced loading overlay
+      setTimeout(() => {
+        loadingOverlay.classList.add('active');
+      }, 500);
+      
+      // Simulate API call
+      setTimeout(() => {
+        // Simulate successful login
+        loadingOverlay.classList.remove('active');
+        submitBtn.classList.remove('loading');
+        messageEl.textContent = "Sign in successful! Redirecting...";
+        messageEl.style.color = document.body.classList.contains('dark-theme') ? "#f0f0f0" : "#333333";
+        
+        // Redirect to dashboard after a delay
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 1500);
+      }, 2500);
+    });
+    
+    // Navigation functions
+    function openSignupPage() {
+      window.location.href = "signup.html";
+    }
+    
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = themeToggle.querySelector('i');
+    
+    // Check for saved theme preference
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark-theme');
+      themeIcon.classList.remove('fa-moon');
+      themeIcon.classList.add('fa-sun');
+    }
+    
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-theme');
+      
+      if (document.body.classList.contains('dark-theme')) {
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+        localStorage.setItem('theme', 'light');
+      }
+    });
+    
+    // Initialize air bubbles
+    window.addEventListener('load', createAirBubbles);
+  </script>
+</body>
+</html>

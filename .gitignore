@@ -1,0 +1,53 @@
+# -----------------------------------
+# Node.js Essentials
+# -----------------------------------
+node_modules/
+.env
+package-lock.json
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# -----------------------------------
+# MongoDB Import/Export Data Files
+# -----------------------------------
+# Exclude all .json files used for data import
+*.json
+
+# But keep package.json
+!package.json
+
+# Optionally, exclude specific folders where dumps live
+data/
+imports/
+dump/
+
+# -----------------------------------
+# Frontend Build Files (if added later)
+# -----------------------------------
+dist/
+build/
+
+# -----------------------------------
+# System Files
+# -----------------------------------
+.DS_Store
+Thumbs.db
+
+# -----------------------------------
+# Editor/IDE Configs
+# -----------------------------------
+.vscode/
+.idea/
+*.swp
+
+# -----------------------------------
+# Test Coverage (if using Jest or others later)
+# -----------------------------------
+coverage/
+
+*.crdownload

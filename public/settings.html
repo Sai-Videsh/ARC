@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    .settings-container {
+      background: white;
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+    }
+    .settings-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .setting-option {
+      margin: 15px 0;
+    }
+    .setting-option label {
+      display: block;
+      font-size: 1rem;
+      margin-bottom: 5px;
+    }
+    .back-link, .logout-btn {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      font-size: 1rem;
+      text-decoration: underline;
+      color: #000;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="settings-container">
+    <h2>Settings</h2>
+    <div class="setting-option">
+      <label for="themeToggle">Theme</label>
+      <select id="themeToggle">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </div>
+    <div class="setting-option">
+      <label>Account</label>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+    <a class="back-link" href="dashboard.html">← Back to Dashboard</a>
+  </div>
+
+  <script>
+    document.getElementById('themeToggle').addEventListener('change', function () {
+      const theme = this.value;
+      document.body.style.backgroundColor = theme === 'dark' ? '#222' : '#f4f4f4';
+    });
+
+    function logout() {
+      // clear session or localStorage if needed
+      alert("Logged out successfully!");
+      localStorage.clear(); // Clears userId and all session data
+      window.location.href = "signin.html";
+    }
+  </script>
+</body>
+</html>

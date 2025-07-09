@@ -1,0 +1,23 @@
+# Dockerfile.backend
+FROM node:18
+
+# Set working directory inside container
+WORKDIR /app
+
+# Copy only the backend files (adjust path)
+COPY server/package*.json ./
+
+# Install backend dependencies
+RUN npm install
+
+# Copy rest of the server source
+COPY server/ .
+
+# Copy the .env file from inside server
+COPY server/.env .env
+
+# Expose backend port
+EXPOSE 5000
+
+# Start the backend server
+CMD ["node", "app.js"]

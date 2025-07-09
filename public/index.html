@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARC - Air Purification</title>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500&display=swap">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <div class="navbar">
+                <div class="logo">ARC</div>
+                <div class="nav-links">
+                    <a href="#choose-arc">Models</a>
+                    <a href="#smart-features">Features</a>
+                    <a href="#advanced-technology">Technology</a>
+                    <a href="#models-comparison">Compare</a>
+                </div>
+                
+                <div class="nav-buttons">
+                    <button class="cart-btn" id="cart-btn">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cart-count">0</span>
+                    </button>
+                    <div class="cart-dropdown" id="cart-dropdown">
+                        <div class="cart-content">
+                            <h3>Your Cart</h3>
+                            <div class="cart-items" id="cart-items"></div>
+                            <p class="empty-cart" id="empty-cart">Your cart is empty.</p>
+                            <button class="checkout-btn" id="checkout-btn" disabled>Checkout</button>
+                        </div>
+                    </div>
+                    <button class="shop-btn" id="btn1" onclick="openSignupPage()">SignUp</button>
+                    <button class="shop-btn" id="btn2" onclick="openSigninPage()">SignIn</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="tagline">Breathe Differently</h1>
+                <p class="subheading">Where Innovation Meets Inhalation. Experience air purification reimagined.</p>
+                <div class="hero-images">
+                    <img src="assets/arcpro.jpeg" alt="ARC Pro" class="hero-image">
+                    <img src="assets/arcair.jpeg" alt="ARC Air" class="hero-image">
+                    <img src="assets/arcmini.jpeg" alt="ARC Mini" class="hero-image">
+        </div>
+    </section>
+
+    <!-- Choose Your ARC Section -->
+    <section class="choose-section" id="choose-arc">
+        <div class="container">
+            <h2>Choose Your ARC</h2>
+            <div class="tabs">
+                <button class="tab-btn active" data-model="arc-pro">ARC Pro</button>
+                <button class="tab-btn" data-model="arc-air">ARC Air</button>
+                <button class="tab-btn" data-model="arc-mini">ARC Mini</button>
+            </div>
+            <div id="product-details" class="product-details">
+                <div class="product-image">
+                    <img src="assets/arcpro.jpeg" alt="ARC Pro" class="arcimages">
+                </div>
+                <div class="product-info">
+                    <h3>ARC Pro</h3>
+                    <p>Our flagship model with advanced purification technology for large spaces. Designed for homes and offices up to 1,200 sq.ft.</p>
+                    <div class="price"><del>₹41,499</del> ₹40,999</div>
+                    <div class="features">
+                        <div class="feature"><i class="fas fa-sync-alt"></i> 360° Purification</div>
+                        <div class="feature"><i class="fas fa-shield-alt"></i> HEPA-13 Filter</div>
+                        <div class="feature"><i class="fas fa-lightbulb"></i> Smart Sensing</div>
+                        <div class="feature"><i class="fas fa-mobile-alt"></i> App Control</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="buy-btn" data-model="arc-pro" onclick="openwaitlist()">Buy Now</button>
+                        <button class="learn-btn">Learn More</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Smart Features Section -->
+    <section class="smart-features-section" id="smart-features">
+        <div class="container">
+            <h2>Smart Features</h2>
+            <div class="smart-features-grid">
+                <div class="smart-feature">
+                    <i class="fas fa-sync-alt"></i>
+                    <h3>360° Purification</h3>
+                    <p>Innovative design allows for air intake from all directions, ensuring complete room coverage.</p>
+                </div>
+                <div class="smart-feature">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>HEPA Filtration</h3>
+                    <p>Captures 99.97% of particles as small as 0.3 microns, including allergens and viruses.</p>
+                </div>
+                <div class="smart-feature">
+                    <i class="fas fa-lightbulb"></i>
+                    <h3>Smart Sensing</h3>
+                    <p>Automatically adjusts purification levels based on real-time air quality monitoring.</p>
+                </div>
+                <div class="smart-feature">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h3>App Control</h3>
+                    <p>Control your ARC from anywhere with our intuitive smartphone app for iOS and Android.</p>
+                </div>
+                <div class="smart-feature">
+                    <i class="fas fa-bell"></i>
+                    <h3>Filter Alerts</h3>
+                    <p>Get notified when it’s time to replace your filter for optimal performance.</p>
+                </div>
+                <div class="smart-feature">
+                    <i class="fas fa-volume-mute"></i>
+                    <h3>Whisper Quiet</h3>
+                    <p>As low as 22dB in sleep mode, quieter than a whisper for undisturbed rest.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advanced Technology Section -->
+    <section class="advanced-tech-section" id="advanced-technology">
+        <div class="container">
+            <h2>Advanced Technology</h2>
+            <div class="advanced-tech-content">
+                <div class="tech-text">
+                    <p>The ARC purifier uses cutting-edge technology to deliver the cleanest air possible. Our proprietary CleanCore™ system combines multiple filtration layers to remove 99.97% of airborne particles as small as 0.3 microns.</p>
+                    <div class="tech-list">
+                        <div class="tech-item">
+                            <span>1</span>
+                            <div>
+                                <h3>Pre-Filter</h3>
+                                <p>Captures large particles like dust, hair, and pet dander.</p>
+                            </div>
+                        </div>
+                        <div class="tech-item">
+                            <span>2</span>
+                            <div>
+                                <h3>Carbon Filter</h3>
+                                <p>Absorbs odors, smoke, and harmful VOCs.</p>
+                            </div>
+                        </div>
+                        <div class="tech-item">
+                            <span>3</span>
+                            <div>
+                                <h3>HEPA Filter</h3>
+                                <p>Traps microscopic particles including allergens and bacteria.</p>
+                            </div>
+                        </div>
+                        <div class="tech-item">
+                            <span>4</span>
+                            <div>
+                                <h3>Ionizer</h3>
+                                <p>Optional feature that helps capture the smallest particles.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tech-graphic">
+                    <div class="graphic-container">
+                        <div class="circle circle-1"></div>
+                        <div class="circle circle-2"></div>
+                        <div class="circle circle-3"></div>
+                        <div class="circle circle-4"></div>
+                        <div class="dot dot-1"></div>
+                        <div class="dot dot-2"></div>
+                        <div class="dot dot-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why To Choose ARC Section -->
+    <section class="choose-section">
+        <div class="container">
+            <h2>Why To Choose ARC</h2>
+            <div class="smart-features-grid">
+                <div class="smart-feature">
+                    <i class="fas fa-cogs"></i>
+                    <h3>Superior Technology</h3>
+                    <p>Our CleanCore™ system ensures the highest level of air purification with multiple filtration layers.</p>
+                </div>
+                <div class="smart-feature">
+                    <i class="fas fa-leaf"></i>
+                    <h3>Eco-Friendly Design</h3>
+                    <p>Energy-efficient operation and sustainable materials make ARC a green choice for your home.</p>
+                </div>
+                <div class="smart-feature">
+                    <i class="fas fa-award"></i>
+                    <h3>Award-Winning Performance</h3>
+                    <p>Recognized for excellence in air purification by leading industry experts.</p>
+                </div>
+                <div class="smart-feature">
+                    <i class="fas fa-users"></i>
+                    <h3>Trusted by Thousands</h3>
+                    <p>Join a community of satisfied customers who breathe easier with ARC.</p>
+                </div>
+                <div class="smart-feature">
+                    <i class="fas fa-heartbeat"></i>
+                    <h3>Health First</h3>
+                    <p>Protect your family from allergens, pollutants, and viruses with ARC’s advanced filtration.</p>
+                </div>
+                <div class="smart-feature">
+                    <i class="fas fa-headset"></i>
+                    <h3>24/7 Support</h3>
+                    <p>Our dedicated support team is always here to help with any questions or concerns.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Models Comparison Section -->
+    <section class="compare-section" id="models-comparison">
+        <div class="container">
+            <h2>Models Comparison</h2>
+            <table class="compare-table">
+                <tr>
+                    <th>Features</th>
+                    <th>ARC Pro</th>
+                    <th>ARC Air</th>
+                    <th>ARC Mini</th>
+                </tr>
+                <tr>
+                    <td>Filter Type</td>
+                    <td>HEPA-13</td>
+                    <td>HEPA-12</td>
+                    <td>HEPA-11</td>
+                </tr>
+                <tr>
+                    <td>Smart Sensing</td>
+                    <td>Advanced</td>
+                    <td>Standard</td>
+                    <td>Basic</td>
+                </tr>
+                <tr>
+                    <td>App Control</td>
+                    <td><i class="fas fa-check check-icon"></i></td>
+                    <td><i class="fas fa-check check-icon"></i></td>
+                    <td><i class="fas fa-times cross-icon"></i></td>
+                </tr>
+                <tr>
+                    <td>Voice Control</td>
+                    <td><i class="fas fa-check check-icon"></i></td>
+                    <td><i class="fas fa-check check-icon"></i></td>
+                    <td><i class="fas fa-times cross-icon"></i></td>
+                </tr>
+                <tr>
+                    <td>Filter Life</td>
+                    <td>12 months</td>
+                    <td>10 months</td>
+                    <td>8 months</td>
+                </tr>
+                <tr>
+                    <td>Price</td>
+                    <td>₹41,499</td>
+                    <td>₹28,999</td>
+                    <td>₹16,499</td>
+                </tr>
+            </table>
+        </div>
+    </section>
+
+    <!-- New Hero Section -->
+    <div class="new-hero">
+        <h1>Experience ARC</h1>
+        <p>Transform your living space with cleaner, fresher air. The future of air purification is here.</p>
+        <div class="buttons">
+            <a href="#" class="shop-now" onclick="openwaitlist()">Shop Now</a>
+            <a href="#" class="learn-more">Learn More</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div>
+            <h3>ARC</h3>
+            <p>Where Innovation Meets Inhalation</p>
+        </div>
+        <div class="footer-links">
+            <h3>Products</h3>
+            <a href="#">ARC Pro</a>
+            <a href="#">ARC Air</a>
+            <a href="#">ARC Mini</a>
+            <a href="#">Replacement Filters</a>
+        </div>
+        <div class="footer-links">
+            <h3>Company</h3>
+            <a href="#">Press</a>
+        </div>
+        <div class="footer-links">
+            <h3>Support</h3>
+            <a href="#">About Us</a>
+            <a href="#">Sustainability</a>
+            <a href="#">Contact</a>
+            <a href="#">FAQs</a>
+            <a href="#">Warranty</a>
+        </div>
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+        <div class="copyright">© 2023 ARC. All rights reserved.</div>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-x-twitter"></i></a>
+        </div>
+    </div>
+
+    <script src="scripts.js"></script>
+</body>
+</html>

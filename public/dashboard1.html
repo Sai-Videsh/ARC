@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arc E-Commerce Dashboard</title>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      transition: all 0.3s ease;
+    }
+    body.dark-mode {
+      background-color: #1a1a1a;
+      color: #f0f0f0;
+    }
+    .container {
+      min-height: 100vh;
+    }
+    .header {
+      background: linear-gradient(135deg, #000000, #2d3436);
+      color: #ffffff;
+      padding: 15px;
+      text-align: center;
+      border-bottom: 1px solid #666666;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .dark-mode .header {
+      background: linear-gradient(135deg, #121212, #1e1e1e);
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .header-controls {
+      display: flex;
+      gap: 15px;
+    }
+    .menu-button {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: #ffffff;
+      font-size: 1.2rem;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+    .menu-button:hover {
+      background: rgba(255,255,255,0.2);
+      transform: scale(1.05);
+    }
+    .dashboard {
+      display: flex;
+      position: relative;
+      width: 100%;
+    }
+    .sidebar {
+      width: 280px;
+      background-color: #ffffff;
+      padding: 20px 0;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+      height: calc(100vh - 60px);
+      position: sticky;
+      top: 60px;
+    }
+    .dark-mode .sidebar {
+      background-color: #252525;
+      color: #f0f0f0;
+    }
+    .sidebar.closed {
+      transform: translateX(-100%);
+      display: none;
+    }
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        z-index: 1000;
+        height: 100%;
+        top: 60px;
+      }
+      .sidebar.closed {
+        transform: translateX(-100%);
+        display: block;
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .sidebar li {
+      margin: 5px 15px;
+    }
+    .sidebar button {
+      width: 100%;
+      text-align: left;
+      padding: 12px 15px;
+      border: none;
+      border-radius: 8px;
+      background-color: transparent;
+      cursor: pointer;
+      font-size: 1rem;
+      color: #333;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .dark-mode .sidebar button {
+      color: #f0f0f0;
+    }
+    .sidebar button:hover {
+      background-color: #e5e7eb;
+      color: #333;
+    }
+    .dark-mode .sidebar button:hover {
+      background-color: #3a3a3a;
+    }
+    .sidebar button.active {
+      background-color: #000000;
+      color: #ffffff;
+      font-weight: 600;
+    }
+    .dark-mode .sidebar button.active {
+      background-color: #3a3a3a;
+    }
+    .sidebar-logout {
+      background-color: #000000;
+      color: #ffffff;
+      font-weight: 600;
+    }
+    .sidebar-logout:hover {
+      background-color: #e5e7eb;
+      color: #333;
+    }
+    .dark-mode .sidebar-logout {
+      background-color: #3a3a3a;
+    }
+    .dark-mode .sidebar-logout:hover {
+      background-color: #4a4a4a;
+    }
+    .sidebar button i {
+      width: 24px;
+      text-align: center;
+    }
+    .main {
+      flex: 1;
+      padding: 25px;
+    }
+    .main.centered {
+      width: 100%;
+      display: flex;
+      align-items: flex-start;
+      flex-direction: column;
+      min-height: calc(100vh - 60px);
+    }
+    @media (max-width: 768px) {
+      .main {
+        width: 100%;
+        padding: 15px;
+      }
+      .main.centered {
+        width: 100%;
+        padding: 15px;
+      }
+    }
+    .section {
+      background-color: #ffffff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      animation: fadeIn 0.4s ease-in;
+      margin-bottom: 25px;
+      border: 1px solid #eee;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .dark-mode .section {
+      background-color: #252525;
+      color: #f0f0f0;
+      border-color: #444;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .section h2 {
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 15px;
+    }
+    .dark-mode .section h2 {
+      color: #f0f0f0;
+      border-bottom-color: #444;
+    }
+    .section p {
+      margin: 8px 0;
+      line-height: 1.6;
+    }
+    .dark-mode .section p {
+      color: #e0e0e0;
+    }
+    .section strong {
+      font-weight: 600;
+      color: #1e293b;
+    }
+    .dark-mode .section strong {
+      color: #f0f0f0;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #334155;
+    }
+    .dark-mode .form-group label {
+      color: #e0e0e0;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.2s;
+      background-color: white;
+      color: #333;
+    }
+    .dark-mode .form-group input {
+      background-color: #333;
+      border-color: #555;
+      color: #f0f0f0;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .dark-mode .form-group input:focus {
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+    }
+    .button {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .button:active {
+      transform: scale(0.98);
+    }
+    .button-primary {
+      background: linear-gradient(135deg, #000000, #2d3436);
+      color: #ffffff;
+    }
+    .button-primary:hover {
+      background: linear-gradient(135deg, #2d3436, #000000);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .button-danger {
+      background: #ffffff;
+      color: #dc2626;
+      border: 1px solid #dc2626;
+    }
+    .dark-mode .button-danger {
+      background: #333;
+    }
+    .button-danger:hover {
+      background: #fef2f2;
+      box-shadow: 0 4px 10px rgba(220, 38, 38, 0.1);
+    }
+    .dark-mode .button-danger:hover {
+      background: #3a3a3a;
+    }
+    .orders-list {
+      list-style: none;
+      padding: 0;
+    }
+    .orders-list li {
+      padding: 15px;
+      margin-bottom: 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      transition: transform 0.2s;
+      background-color: white;
+    }
+    .dark-mode .orders-list li {
+      background-color: #333;
+      border-color: #444;
+    }
+    .orders-list li:hover {
+      transform: translateY(-2px);
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+    .dark-mode .orders-list li:hover {
+      border-color: #555;
+    }
+    .orders-list p {
+      margin: 7px 0;
+    }
+    .text-sm {
+      font-size: 0.875rem;
+      color: #64748b;
+    }
+    .dark-mode .text-sm {
+      color: #a0a0a0;
+    }
+    .search-bar {
+      margin-bottom: 20px;
+      position: relative;
+      max-width: 600px;
+    }
+    .search-bar input {
+      width: 100%;
+      padding: 10px 15px 10px 40px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 1rem;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+      background-color: white;
+      color: #333;
+    }
+    .dark-mode .search-bar input {
+      background-color: #333;
+      border-color: #555;
+      color: #f0f0f0;
+    }
+    .search-bar input:hover {
+      background-color: #f8fafc;
+    }
+    .dark-mode .search-bar input:hover {
+      background-color: #3a3a3a;
+    }
+    .search-bar input:focus {
+      outline: none;
+      border-width: 2px;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .dark-mode .search-bar input:focus {
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+    }
+    .search-bar i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 1.1rem;
+    }
+    @media (max-width: 768px) {
+      .search-bar input {
+        padding: 8px 12px 8px 35px;
+        font-size: 0.95rem;
+      }
+      .search-bar i {
+        left: 10px;
+        font-size: 1rem;
+      }
+    }
+    .recommendations {
+      margin-top: 25px;
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 20px;
+      border: 1px solid #e2e8f0;
+    }
+    .dark-mode .recommendations {
+      background: #333;
+      border-color: #444;
+    }
+    .recommendations h3 {
+      font-size: 1.25rem;
+      margin-bottom: 15px;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .dark-mode .recommendations h3 {
+      color: #f0f0f0;
+    }
+    .recommendations ul {
+      list-style: none;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    .recommendations li {
+      padding: 12px;
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .dark-mode .recommendations li {
+      background: #3a3a3a;
+      border-color: #555;
+    }
+    .recommendations li:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      border-color: #cbd5e1;
+    }
+    .dark-mode .recommendations li:hover {
+      border-color: #666;
+    }
+    .recommendations li i {
+      color: #2563eb;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-top: 5px;
+    }
+    .status-delivered {
+      background-color: #dcfce7;
+      color: #166534;
+    }
+    .status-processing {
+      background-color: #fffbeb;
+      color: #854d0e;
+    }
+    .status-shipped {
+      background-color: #e0f2fe;
+      color: #1e40af;
+    }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 99;
+      display: none;
+    }
+    @media (max-width: 768px) {
+      .overlay.active {
+        display: block;
+      }
+    }
+    .user-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #000000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 15px;
+    }
+    .dark-mode .user-info {
+      border-bottom-color: #444;
+    }
+    .user-details h3 {
+      margin: 0 0 5px;
+      font-size: 1.1rem;
+    }
+    .user-details p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+    .dark-mode .user-details p {
+      color: #a0a0a0;
+    }
+    
+    /* New Styles for Enhanced Components */
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+    }
+    .dark-mode .stat-card {
+      background: #333;
+      border-color: #444;
+    }
+    .stat-card h3 {
+      font-size: 0.9rem;
+      margin: 0 0 8px;
+      color: #64748b;
+    }
+    .dark-mode .stat-card h3 {
+      color: #a0a0a0;
+    }
+    .stat-card .value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .dark-mode .stat-card .value {
+      color: #f0f0f0;
+    }
+    .stat-card .change {
+      font-size: 0.85rem;
+      margin-top: 5px;
+    }
+    .stat-card .change.positive {
+      color: #166534;
+    }
+    .stat-card .change.negative {
+      color: #b91c1c;
+    }
+    
+    .spending-chart {
+      height: 200px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      margin: 20px 0;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      padding: 0 15px;
+    }
+    .dark-mode .spending-chart {
+      background: #333;
+      border-color: #444;
+    }
+    .chart-bar {
+      width: 40px;
+      background: linear-gradient(135deg, #000000, #2d3436);
+      border-radius: 4px 4px 0 0;
+      transition: height 0.5s ease;
+      position: relative;
+    }
+    .chart-bar-label {
+      position: absolute;
+      bottom: -25px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+    .dark-mode .chart-bar-label {
+      color: #a0a0a0;
+    }
+    
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .action-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 15px 10px;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .dark-mode .action-button {
+      background: #333;
+      border-color: #444;
+    }
+    .action-button:hover {
+      transform: translateY(-3px);
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+    .dark-mode .action-button:hover {
+      border-color: #555;
+    }
+    .action-button i {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      color: #1e293b;
+    }
+    .dark-mode .action-button i {
+      color: #f0f0f0;
+    }
+    .action-button span {
+      font-size: 0.85rem;
+      text-align: center;
+    }
+    .dark-mode .action-button span {
+      color: #e0e0e0;
+    }
+    
+    .setting-option {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .dark-mode .setting-option {
+      border-bottom-color: #444;
+    }
+    .setting-option:last-child {
+      border-bottom: none;
+    }
+    .setting-info {
+      flex: 1;
+    }
+    .setting-info h3 {
+      margin: 0 0 5px;
+      font-size: 1rem;
+    }
+    .dark-mode .setting-info h3 {
+      color: #f0f0f0;
+    }
+    .setting-info p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+    .dark-mode .setting-info p {
+      color: #a0a0a0;
+    }
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #cbd5e1;
+      transition: .4s;
+      border-radius: 24px;
+    }
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .toggle-slider {
+      background: linear-gradient(135deg, #000000, #2d3436);
+    }
+    input:checked + .toggle-slider:before {
+      transform: translateX(26px);
+    }
+    
+    .security-actions {
+      margin-top: 20px;
+    }
+    .security-button {
+      width: 100%;
+      text-align: left;
+      padding: 12px 15px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background-color: white;
+      cursor: pointer;
+      font-size: 0.95rem;
+      color: #1e293b;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .dark-mode .security-button {
+      background-color: #333;
+      border-color: #444;
+      color: #f0f0f0;
+    }
+    .security-button:hover {
+      background-color: #f8fafc;
+      border-color: #cbd5e1;
+    }
+    .dark-mode .security-button:hover {
+      background-color: #3a3a3a;
+      border-color: #555;
+    }
+    
+    .reviews-container {
+      margin-top: 25px;
+    }
+    .review-card {
+      padding: 15px;
+      margin-bottom: 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: white;
+    }
+    .dark-mode .review-card {
+      background: #333;
+      border-color: #444;
+    }
+    .review-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .review-product {
+      font-weight: 600;
+    }
+    .dark-mode .review-product {
+      color: #f0f0f0;
+    }
+    .review-rating {
+      color: #f59e0b;
+    }
+    .review-content {
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .dark-mode .review-content {
+      color: #e0e0e0;
+    }
+    
+    .dark-mode-preview {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px;
+      background: #1e293b;
+      border-radius: 8px;
+      color: white;
+      margin-top: 10px;
+    }
+    .dark-mode-preview i {
+      font-size: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="root">Loading...</div>
+  <script type="text/babel">
+    if (!window.React || !window.ReactDOM) {
+      console.error("React or ReactDOM failed to load. Check CDN links or network.");
+      document.getElementById('root').innerText = "Error: Failed to load React. Check console for details.";
+    } else {
+      const { useState, useEffect } = React;
+
+      // Dashboard Component
+      const DashboardSection = ({ profileData }) => {
+        // Spending chart data
+        const spendingData = [
+          { day: 'Mon', amount: 120 },
+          { day: 'Tue', amount: 80 },
+          { day: 'Wed', amount: 210 },
+          { day: 'Thu', amount: 150 },
+          { day: 'Fri', amount: 180 },
+          { day: 'Sat', amount: 240 },
+          { day: 'Sun', amount: 90 }
+        ];
+        
+        // Find max for chart scaling
+        const maxAmount = Math.max(...spendingData.map(d => d.amount));
+        
+        return (
+          <div className="section">
+            <h2><i className="fas fa-tachometer-alt"></i> Dashboard</h2>
+            <div className="user-info">
+              <div className="user-avatar">{profileData.name.charAt(0)}</div>
+              <div className="user-details">
+                <h3>Welcome, {profileData.name}!</h3>
+                <p>Premium Member</p>
+              </div>
+            </div>
+            
+            <div className="stats-container">
+              <div className="stat-card">
+                <h3>Total Orders</h3>
+                <div className="value">12</div>
+                <div className="change positive">↑ 20% from last month</div>
+              </div>
+              <div className="stat-card">
+                <h3>Average Order Value</h3>
+                <div className="value">$149.99</div>
+                <div className="change positive">↑ 8% from last month</div>
+              </div>
+              <div className="stat-card">
+                <h3>Pending Orders</h3>
+                <div className="value">2</div>
+                <div className="change negative">↓ 1 from last week</div>
+              </div>
+              <div className="stat-card">
+                <h3>Total Spent</h3>
+                <div className="value">$1,799.88</div>
+                <div className="change positive">↑ 15% from last month</div>
+              </div>
+            </div>
+            
+            <h3>Weekly Spending Overview</h3>
+            <div className="spending-chart">
+              {spendingData.map(day => (
+                <div 
+                  key={day.day}
+                  className="chart-bar"
+                  style={{
+                    height: `${(day.amount / maxAmount) * 90}%`,
+                  }}
+                >
+                  <div className="chart-bar-label">{day.day}</div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="quick-actions">
+              <div className="action-button">
+                <i className="fas fa-sync-alt"></i>
+                <span>Create Return</span>
+              </div>
+              <div className="action-button">
+                <i className="fas fa-headset"></i>
+                <span>Contact Support</span>
+              </div>
+              <div className="action-button">
+                <i className="fas fa-gift"></i>
+                <span>Apply Coupon</span>
+              </div>
+              <div className="action-button">
+                <i className="fas fa-share-alt"></i>
+                <span>Refer Friends</span>
+              </div>
+            </div>
+            
+            <div className="reviews-container">
+              <h3>Recent Reviews</h3>
+              <div className="review-card">
+                <div className="review-header">
+                  <div className="review-product">Wireless Headphones</div>
+                  <div className="review-rating">
+                    <i className="fas fa-star"></i>
+                    <i className="fas fa-star"></i>
+                    <i className="fas fa-star"></i>
+                    <i className="fas fa-star"></i>
+                    <i className="fas fa-star-half-alt"></i>
+                  </div>
+                </div>
+                <div className="review-content">
+                  "Excellent sound quality and comfortable for long periods. Battery life is impressive!"
+                </div>
+              </div>
+              <div className="review-card">
+                <div className="review-header">
+                  <div className="review-product">Smart Coffee Maker</div>
+                  <div className="review-rating">
+                    <i className="fas fa-star"></i>
+                    <i className="fas fa-star"></i>
+                    <i className="fas fa-star"></i>
+                    <i className="fas fa-star"></i>
+                    <i className="far fa-star"></i>
+                  </div>
+                </div>
+                <div className="review-content">
+                  "Works perfectly with my morning routine. App could be more intuitive though."
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      // Profile Component
+      const Profile = ({ profileData }) => (
+        <div className="section">
+          <h2><i className="fas fa-user"></i> Profile</h2>
+          <div className="user-info">
+            <div className="user-avatar">{profileData.name.charAt(0)}</div>
+            <div className="user-details">
+              <h3>{profileData.name}</h3>
+              <p>{profileData.email}</p>
+            </div>
+          </div>
+          <p><strong><i className="fas fa-envelope"></i> Email:</strong> {profileData.email}</p>
+          <p><strong><i className="fas fa-phone"></i> Phone:</strong> {profileData.phone}</p>
+          <p><strong><i className="fas fa-map-marker-alt"></i> Address:</strong> {profileData.address}</p>
+        </div>
+      );
+
+      // Edit Profile Component
+      const EditProfile = ({ profileData, setProfileData }) => {
+        const [name, setName] = useState(profileData.name);
+        const [email, setEmail] = useState(profileData.email);
+        const [phone, setPhone] = useState(profileData.phone);
+        const [address, setAddress] = useState(profileData.address);
+
+        const handleSubmit = (e) => {
+          e.preventDefault();
+          const updatedProfile = { name, email, phone, address };
+          setProfileData(updatedProfile);
+          localStorage.setItem('profileData', JSON.stringify(updatedProfile));
+          alert('Profile updated successfully!');
+        };
+
+        return (
+          <div className="section">
+            <h2><i className="fas fa-edit"></i> Edit Profile</h2>
+            <div>
+              <div className="form-group">
+                <label><i className="fas fa-signature"></i> Name</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter your full name"
+                />
+              </div>
+              <div className="form-group">
+                <label><i className="fas fa-envelope"></i> Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email address"
+                />
+              </div>
+              <div className="form-group">
+                <label><i className="fas fa-phone"></i> Phone</label>
+                <input
+                  type="text"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Enter your phone number"
+                />
+              </div>
+              <div className="form-group">
+                <label><i className="fas fa-home"></i> Address</label>
+                <input
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="Enter your full address"
+                />
+              </div>
+              <button
+                onClick={handleSubmit}
+                className="button button-primary"
+              >
+                <i className="fas fa-save"></i> Save Changes
+              </button>
+            </div>
+          </div>
+        );
+      };
+
+      // Orders Component
+      const Orders = () => {
+        const [searchTerm, setSearchTerm] = useState('');
+        const [orders, setOrders] = useState([]);
+        
+        useEffect(() => {
+          setTimeout(() => {
+            setOrders([
+              { id: '#1234', amount: 99.99, status: 'Delivered', date: '01/07/2025', category: 'Electronics', items: ['Wireless Headphones', 'USB-C Cable'] },
+              { id: '#1235', amount: 149.99, status: 'Processing', date: '03/07/2025', category: 'Clothing', items: ['Cotton T-Shirt', 'Summer Shorts'] },
+              { id: '#1236', amount: 299.99, status: 'Shipped', date: '05/07/2025', category: 'Home & Kitchen', items: ['Smart Coffee Maker', 'Electric Kettle'] },
+              { id: '#1237', amount: 89.99, status: 'Delivered', date: '02/07/2025', category: 'Books', items: ['Design Patterns', 'Clean Code'] }
+            ]);
+          }, 500);
+        }, []);
+
+        const getRecommendations = () => {
+          const categories = [...new Set(orders.map(order => order.category))];
+          const productCatalog = {
+            Electronics: ['Smartphone', 'Laptop', 'Headphones', 'Smart Watch'],
+            Clothing: ['Jacket', 'Shoes', 'T-Shirt', 'Jeans'],
+            'Home & Kitchen': ['Coffee Maker', 'Air Fryer', 'Blender', 'Cookware Set'],
+            Books: ['JavaScript Mastery', 'React Patterns', 'CSS Secrets', 'UX Design']
+          };
+          
+          let recommendations = [];
+          categories.forEach(category => {
+            if (productCatalog[category]) {
+              recommendations = [...recommendations, ...productCatalog[category].slice(0, 2)];
+            }
+          });
+          
+          if (orders.length > 0) {
+            recommendations.unshift('Premium Earbuds', 'Designer Backpack');
+          }
+          
+          return recommendations.slice(0, 4);
+        };
+
+        const filteredOrders = orders.filter(order =>
+          order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          order.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          order.category.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+        return (
+          <div className="section">
+            <h2><i className="fas fa-shopping-bag"></i> Orders</h2>
+            <div className="search-bar">
+              <i className="fas fa-search"></i>
+              <input
+                type="text"
+                placeholder="Search orders..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            
+            {orders.length === 0 ? (
+              <div style={{textAlign: 'center', padding: '30px'}}>
+                <i className="fas fa-spinner fa-spin" style={{fontSize: '2rem', marginBottom: '15px'}}></i>
+                <p>Loading your orders...</p>
+              </div>
+            ) : filteredOrders.length > 0 ? (
+              <ul className="orders-list">
+                {filteredOrders.map(order => (
+                  <li key={order.id}>
+                    <p><strong>Order {order.id}</strong> - ${order.amount.toFixed(2)}</p>
+                    <p>
+                      <span className={`status-badge status-${order.status.toLowerCase()}`}>
+                        {order.status}
+                      </span>
+                    </p>
+                    <p className="text-sm"><i className="far fa-calendar"></i> Placed on: {order.date}</p>
+                    <p className="text-sm"><i className="fas fa-tag"></i> Category: {order.category}</p>
+                    <p className="text-sm"><i className="fas fa-box"></i> Items: {order.items.join(', ')}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div style={{textAlign: 'center', padding: '30px'}}>
+                <i className="fas fa-search" style={{fontSize: '2rem', marginBottom: '15px'}}></i>
+                <p>No orders found matching your search</p>
+              </div>
+            )}
+            
+            <div className="recommendations">
+              <h3><i className="fas fa-lightbulb"></i> Recommended For You</h3>
+              <ul>
+                {getRecommendations().map((product, index) => (
+                  <li key={index}>
+                    <i className="fas fa-star"></i> {product}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        );
+      };
+
+      // Wishlist Component
+      const Wishlist = () => (
+        <div className="section">
+          <h2><i className="fas fa-heart"></i> Wishlist</h2>
+          <p>Your wishlist is currently empty.</p>
+          <button className="button button-primary" style={{marginTop: '15px'}}>
+            <i className="fas fa-shopping-cart"></i> Start Shopping
+          </button>
+        </div>
+      );
+
+      // Enhanced Settings Component
+      const Settings = () => {
+        const [notificationSettings, setNotificationSettings] = useState({
+          email: true,
+          sms: false,
+          push: true,
+          promotions: true
+        });
+        
+        const [darkMode, setDarkMode] = useState(false);
+        
+        const handleToggle = (setting) => {
+          setNotificationSettings(prev => ({
+            ...prev,
+            [setting]: !prev[setting]
+          }));
+        };
+        
+        const toggleDarkMode = () => {
+          const newDarkMode = !darkMode;
+          setDarkMode(newDarkMode);
+          if (newDarkMode) {
+            document.body.classList.add('dark-mode');
+          } else {
+            document.body.classList.remove('dark-mode');
+          }
+          localStorage.setItem('darkMode', newDarkMode);
+        };
+        
+        // Check for saved dark mode preference on load
+        useEffect(() => {
+          const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+          if (savedDarkMode) {
+            setDarkMode(savedDarkMode);
+            document.body.classList.add('dark-mode');
+          }
+        }, []);
+        
+        return (
+          <div className="section">
+            <h2><i className="fas fa-cog"></i> Settings</h2>
+            
+            <h3>Notification Preferences</h3>
+            <div>
+              <div className="setting-option">
+                <div className="setting-info">
+                  <h3>Email Notifications</h3>
+                  <p>Order updates, promotions, and account alerts</p>
+                </div>
+                <label className="toggle-switch">
+                  <input 
+                    type="checkbox" 
+                    checked={notificationSettings.email}
+                    onChange={() => handleToggle('email')}
+                  />
+                  <span className="toggle-slider"></span>
+                </label>
+              </div>
+              
+              <div className="setting-option">
+                <div className="setting-info">
+                  <h3>SMS Alerts</h3>
+                  <p>Order shipping notifications and security alerts</p>
+                </div>
+                <label className="toggle-switch">
+                  <input 
+                    type="checkbox" 
+                    checked={notificationSettings.sms}
+                    onChange={() => handleToggle('sms')}
+                  />
+                  <span className="toggle-slider"></span>
+                </label>
+              </div>
+              
+              <div className="setting-option">
+                <div className="setting-info">
+                  <h3>Push Notifications</h3>
+                  <p>App notifications for deals and new features</p>
+                </div>
+                <label className="toggle-switch">
+                  <input 
+                    type="checkbox" 
+                    checked={notificationSettings.push}
+                    onChange={() => handleToggle('push')}
+                  />
+                  <span className="toggle-slider"></span>
+                </label>
+              </div>
+              
+              <div className="setting-option">
+                <div className="setting-info">
+                  <h3>Promotional Offers</h3>
+                  <p>Special deals, discounts, and exclusive offers</p>
+                </div>
+                <label className="toggle-switch">
+                  <input 
+                    type="checkbox" 
+                    checked={notificationSettings.promotions}
+                    onChange={() => handleToggle('promotions')}
+                  />
+                  <span className="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+            
+            <h3>Appearance</h3>
+            <div className="setting-option">
+              <div className="setting-info">
+                <h3>Dark Mode</h3>
+                <p>Switch to dark color scheme</p>
+              </div>
+              <label className="toggle-switch">
+                <input 
+                  type="checkbox" 
+                  checked={darkMode}
+                  onChange={toggleDarkMode}
+                />
+                <span className="toggle-slider"></span>
+              </label>
+            </div>
+            <div className="dark-mode-preview">
+              <i className="fas fa-moon"></i>
+              <p>Preview of dark mode theme</p>
+            </div>
+            
+            <h3>Account Security</h3>
+            <div className="security-actions">
+              <button className="security-button">
+                <i className="fas fa-lock"></i> Change Password
+              </button>
+              <button className="security-button">
+                <i className="fas fa-shield-alt"></i> Two-Factor Authentication
+              </button>
+              <button className="security-button">
+                <i className="fas fa-list"></i> Login Activity
+              </button>
+              <button className="security-button">
+                <i className="fas fa-user-shield"></i> Privacy Settings
+              </button>
+            </div>
+            
+            <h3>Payment Methods</h3>
+            <div className="security-actions">
+              <button className="security-button">
+                <i className="fas fa-credit-card"></i> Add Payment Method
+              </button>
+              <button className="security-button">
+                <i className="fas fa-money-bill-wave"></i> Manage Subscriptions
+              </button>
+            </div>
+          </div>
+        );
+      };
+
+      // Logout Component
+      const Logout = () => (
+        <div className="section">
+          <h2><i className="fas fa-sign-out-alt"></i> Logout</h2>
+          <p>Are you sure you want to logout from your account?</p>
+          <button
+            onClick={() => {
+              localStorage.removeItem('profileData');
+              alert('Logged out successfully!');
+            }}
+            className="button button-danger"
+          >
+            <i className="fas fa-sign-out-alt"></i> Confirm Logout
+          </button>
+        </div>
+      );
+
+      // Main Dashboard Component
+      const Dashboard = () => {
+        const [activeSection, setActiveSection] = useState('dashboard');
+        const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+        const [profileData, setProfileData] = useState(() => {
+          try {
+            const savedData = localStorage.getItem('profileData');
+            return savedData ? JSON.parse(savedData) : {
+              name: 'Alex Morgan',
+              email: 'alex.morgan@example.com',
+              phone: '+1 (555) 123-4567',
+              address: '456 Commerce Street, San Francisco, CA 94103',
+            };
+          } catch (error) {
+            console.error("Error parsing profile data from local storage:", error);
+            return {
+              name: 'Alex Morgan',
+              email: 'alex.morgan@example.com',
+              phone: '+1 (555) 123-4567',
+              address: '456 Commerce Street, San Francisco, CA 94103',
+            };
+          }
+        });
+
+        useEffect(() => {
+          const handleClickOutside = (e) => {
+            if (window.innerWidth <= 768 && 
+                isSidebarOpen && 
+                !e.target.closest('.sidebar') && 
+                !e.target.closest('.menu-button')) {
+              setIsSidebarOpen(false);
+            }
+          };
+
+          document.addEventListener('click', handleClickOutside);
+          return () => document.removeEventListener('click', handleClickOutside);
+        }, [isSidebarOpen]);
+
+        return (
+          <div className="container">
+            <header className="header">
+              <button 
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
+                className="menu-button"
+                aria-label="Toggle menu"
+              >
+                <i className={isSidebarOpen ? "fas fa-times" : "fas fa-bars"}></i>
+              </button>
+              <h1>Arc E-Commerce Dashboard</h1>
+              <div className="header-controls">
+                <button className="menu-button" aria-label="Notifications">
+                  <i className="fas fa-bell"></i>
+                </button>
+                <button
+                  onClick={() => setActiveSection('settings')}
+                  className="menu-button"
+                  aria-label="Settings"
+                >
+                  <i className="fas fa-cog"></i>
+                </button>
+              </div>
+            </header>
+            
+            {isSidebarOpen && window.innerWidth <= 768 && (
+              <div className="overlay active"></div>
+            )}
+            
+            <div className="dashboard">
+              <nav className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
+                <div className="user-info">
+                  <div className="user-avatar">{profileData.name.charAt(0)}</div>
+                  <div className="user-details">
+                    <h3>{profileData.name}</h3>
+                    <p>Premium Member</p>
+                  </div>
+                </div>
+                <ul>
+                  <li>
+                    <button
+                      onClick={() => setActiveSection('dashboard')}
+                      className={activeSection === 'dashboard' ? 'active' : ''}
+                    >
+                      <i className="fas fa-tachometer-alt"></i> Dashboard
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => setActiveSection('profile')}
+                      className={activeSection === 'profile' ? 'active' : ''}
+                    >
+                      <i className="fas fa-user"></i> Profile
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => setActiveSection('edit')}
+                      className={activeSection === 'edit' ? 'active' : ''}
+                    >
+                      <i className="fas fa-edit"></i> Edit Profile
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => setActiveSection('orders')}
+                      className={activeSection === 'orders' ? 'active' : ''}
+                    >
+                      <i className="fas fa-shopping-bag"></i> Orders
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => setActiveSection('wishlist')}
+                      className={activeSection === 'wishlist' ? 'active' : ''}
+                    >
+                      <i className="fas fa-heart"></i> Wishlist
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => setActiveSection('settings')}
+                      className={activeSection === 'settings' ? 'active' : ''}
+                    >
+                      <i className="fas fa-cog"></i> Settings
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => setActiveSection('logout')}
+                      className={`sidebar-logout ${activeSection === 'logout' ? 'active' : ''}`}
+                    >
+                      <i className="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                  </li>
+                </ul>
+              </nav>
+              <main className={`main ${!isSidebarOpen ? 'centered' : ''}`}>
+                {activeSection === 'dashboard' && <DashboardSection profileData={profileData} />}
+                {activeSection === 'profile' && <Profile profileData={profileData} />}
+                {activeSection === 'edit' && <EditProfile profileData={profileData} setProfileData={setProfileData} />}
+                {activeSection === 'orders' && <Orders />}
+                {activeSection === 'wishlist' && <Wishlist />}
+                {activeSection === 'settings' && <Settings />}
+                {activeSection === 'logout' && <Logout />}
+              </main>
+            </div>
+          </div>
+        );
+      };
+
+      try {
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<Dashboard />);
+      } catch (error) {
+        console.error("Error rendering React app:", error);
+        document.getElementById('root').innerText = "Error: Failed to render dashboard. Check console for details.";
+      }
+    }
+  </script>
+</body>
+</html>
