@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs'); // or require('bcrypt');
 
 // ✅ Signup route
 router.post('/signup', async (req, res) => {
-  const { name, email, password, address, preferences } = req.body;
+  const { name, phone, email, password, address} = req.body;
 
   try {
     // 1. Check if user already exists
@@ -20,10 +20,10 @@ router.post('/signup', async (req, res) => {
     // 3. Create new user
     const user = new User({
       name,
+      phone,
       email,
       password: hashedPassword,
       address,
-      preferences,
     });
 
     await user.save();
@@ -57,9 +57,9 @@ router.post('/signin', async (req, res) => {
       user: {
         id: user._id,
         name: user.name,
+        phone: user.phone,
         email: user.email,
         address: user.address,
-        preferences: user.preferences
       }
     });
 
