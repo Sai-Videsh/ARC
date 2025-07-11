@@ -1,6 +1,3 @@
-// ✅ Combined scripts.js (inline + external logic)
-
-// Air bubble visualization
 function createAirBubbles() {
   const container = document.getElementById("air-visualization");
   const bubbleCount = 15;
@@ -19,7 +16,7 @@ function createAirBubbles() {
   }
 }
 
-// Theme toggle functionality
+// ========== THEME TOGGLE ==========
 const themeToggle = document.getElementById("themeToggle");
 if (themeToggle) {
   const themeIcon = themeToggle.querySelector("i");
@@ -42,7 +39,7 @@ if (themeToggle) {
   });
 }
 
-// Toggle password visibility
+// ========== PASSWORD VISIBILITY ==========
 const passwordToggles = document.querySelectorAll(".password-toggle");
 passwordToggles.forEach((toggle) => {
   toggle.addEventListener("click", () => {
@@ -57,7 +54,6 @@ passwordToggles.forEach((toggle) => {
   });
 });
 
-// Password validation
 function validatePasswords() {
   const password = document.getElementById("password")?.value;
   const confirmPassword = document.getElementById("confirmPassword")?.value;
@@ -77,8 +73,80 @@ function openSigninPage() {
   window.location.href = "signin.html";
 }
 
-// DOMContentLoaded logic
+// ========== OTP VERIFICATION FROM otp.html ==========
+const urlParams = new URLSearchParams(window.location.search);
+const email = urlParams.get('email');
+if (window.location.pathname.includes("otp.html") && !email) {
+  alert("Invalid access. Email is missing from URL.");
+  window.location.href = "signup.html";
+}
 
+document.getElementById('otpForm')?.addEventListener('submit', async function (e) {
+  e.preventDefault();
+
+  const otp = document.getElementById('otp').value;
+  const messageEl = document.getElementById('otp-message');
+  const submitBtn = document.querySelector('.submit-btn');
+  const loadingOverlay = document.getElementById('loadingOverlay');
+
+  if (!otp) {
+    messageEl.textContent = "Please enter the OTP";
+    return;
+  }
+
+  if (!/^\d{6}$/.test(otp)) {
+    messageEl.textContent = "OTP must be a 6-digit number";
+    return;
+  }
+
+  submitBtn.classList.add('loading');
+  messageEl.textContent = "Verifying OTP...";
+  messageEl.style.color = document.body.classList.contains('dark-theme') ? "#aaaaaa" : "#555555";
+  loadingOverlay.classList.add('active');
+
+  try {
+    const res = await fetch("http://localhost:5000/api/verify-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, otp }),
+    });
+
+    const data = await res.json();
+    loadingOverlay.classList.remove('active');
+    submitBtn.classList.remove('loading');
+
+    if (res.ok) {
+      messageEl.textContent = "OTP verified successfully! Redirecting...";
+      messageEl.style.color = document.body.classList.contains('dark-theme') ? "#4caf50" : "#388e3c";
+      setTimeout(() => {
+        window.location.href = "signin.html";
+      }, 1500);
+    } else {
+      messageEl.textContent = data.message || "Verification failed";
+      messageEl.style.color = "red";
+    }
+  } catch (error) {
+    console.error("OTP verification error:", error);
+    messageEl.textContent = "❌ Server error. Try again later.";
+    messageEl.style.color = "red";
+    loadingOverlay.classList.remove('active');
+    submitBtn.classList.remove('loading');
+  }
+});
+
+document.getElementById('resendOtp')?.addEventListener('click', async function (e) {
+  e.preventDefault();
+  const messageEl = document.getElementById('otp-message');
+  messageEl.textContent = "Resending OTP...";
+  messageEl.style.color = document.body.classList.contains('dark-theme') ? "#aaaaaa" : "#555555";
+
+  setTimeout(() => {
+    messageEl.textContent = `OTP resent to ${email}`;
+    messageEl.style.color = document.body.classList.contains('dark-theme') ? "#4caf50" : "#388e3c";
+  }, 1500);
+});
+
+// ========== FORM SUBMISSION HANDLERS ==========
 document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("load", createAirBubbles);
 
@@ -89,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
     signupForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const fullName = document.getElementById("fullName").value;
+      const name = document.getElementById("fullName").value;
       const phone = document.getElementById("phone").value;
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
@@ -99,11 +167,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const submitBtn = document.querySelector(".submit-btn");
       const loadingOverlay = document.getElementById("loadingOverlay");
 
-      if (!fullName || !phone || !email || !password || !confirmPassword || !address) {
+      if (!name || !phone || !email || !password || !confirmPassword || !address) {
         messageEl.textContent = "Please fill in all fields";
         return;
       }
-      if (fullName.length < 2) {
+      if (name.length < 2) {
         messageEl.textContent = "Full name must be at least 2 characters";
         return;
       }
@@ -111,10 +179,10 @@ document.addEventListener("DOMContentLoaded", () => {
         messageEl.textContent = "Please enter a valid phone number";
         return;
       }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        messageEl.textContent = "Please enter a valid email address";
-        return;
-      }
+      // if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
+      //   messageEl.textContent = "Please enter a valid email address";
+      //   return;
+      // }
       if (password.length < 6) {
         messageEl.textContent = "Password must be at least 6 characters";
         return;
@@ -135,13 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loadingOverlay?.classList.add("active");
       }, 500);
 
-      const formData = {
-        name: fullName,
-        phone,
-        email,
-        password,
-        address,
-      };
+      const formData = { name, phone, email, password, address };
 
       try {
         const response = await fetch("http://localhost:5000/api/signup", {
@@ -153,9 +215,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const result = await response.json();
         if (response.ok) {
           messageEl.textContent = "Account created successfully! Redirecting...";
-          window.addEventListener('load', createAirBubbles);
           setTimeout(() => {
-            window.location.href = "signin.html";
+            window.location.href = `otp.html?email=${encodeURIComponent(email)}`;
           }, 1500);
         } else {
           messageEl.textContent = result.message || result.msg || "Signup failed";
@@ -208,6 +269,4 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-
-  // Product/cart logic continues here...
 });

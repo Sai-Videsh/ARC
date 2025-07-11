@@ -50,6 +50,8 @@ cd ARC_Copy
 docker-compose up --build
 ```
 
+If want to do things seperately, 
+
 3. Access the services:
 
 * Frontend: [http://localhost:8080]

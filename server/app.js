@@ -19,6 +19,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 // Routes
 app.use('/api', dataRoutes);
 
+
 // Connect to MongoDB
 const connectDB = require('./db');
 connectDB();

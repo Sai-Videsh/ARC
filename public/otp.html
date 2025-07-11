@@ -845,128 +845,140 @@
     <p class="copyright">© 2023 ARC Air Purifiers. All rights reserved.</p>
   </footer>
   
-  <script>
-    // Create air bubbles for visualization
-    function createAirBubbles() {
-      const container = document.getElementById('air-visualization');
-      const bubbleCount = 15;
-      
-      for (let i = 0; i < bubbleCount; i++) {
-        const bubble = document.createElement('div');
-        bubble.classList.add('air-bubble');
-        
-        // Random size between 20px and 100px
-        const size = Math.floor(Math.random() * 80) + 20;
-        bubble.style.width = `${size}px`;
-        bubble.style.height = `${size}px`;
-        
-        // Random position
-        bubble.style.left = `${Math.random() * 100}%`;
-        bubble.style.setProperty('--x-offset', Math.random() * 0.4 - 0.2);
-        
-        // Random animation duration between 10s and 25s
-        const duration = Math.floor(Math.random() * 15) + 10;
-        bubble.style.animationDuration = `${duration}s`;
-        
-        // Random delay
-        bubble.style.animationDelay = `${Math.random() * 5}s`;
-        
-        container.appendChild(bubble);
-      }
-    }
-    
-    // Form submission handling
-    document.getElementById('otpForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const otp = document.getElementById('otp').value;
-      const messageEl = document.getElementById('otp-message');
-      const submitBtn = document.querySelector('.submit-btn');
-      const loadingOverlay = document.getElementById('loadingOverlay');
-      
-      // OTP validation
-      if (!otp) {
-        messageEl.textContent = "Please enter the OTP";
-        return;
-      }
-      
-      if (!/^\d{6}$/.test(otp)) {
-        messageEl.textContent = "OTP must be a 6-digit number";
-        return;
-      }
-      
-      // Show loading states
-      submitBtn.classList.add('loading');
-      messageEl.textContent = "Verifying OTP...";
-      messageEl.style.color = document.body.classList.contains('dark-theme') ? "#aaaaaa" : "#555555";
-      
-      // Show enhanced loading overlay
-      setTimeout(() => {
-        loadingOverlay.classList.add('active');
-      }, 500);
-      
-      // Simulate OTP verification
-      setTimeout(() => {
-        loadingOverlay.classList.remove('active');
-        submitBtn.classList.remove('loading');
-        messageEl.textContent = "OTP verified successfully! Redirecting...";
-        messageEl.style.color = document.body.classList.contains('dark-theme') ? "#4caf50" : "#388e3c";
-        
-        // Redirect to dashboard after a delay
-        setTimeout(() => {
-          window.location.href = "dashboard.html";
-        }, 1500);
-      }, 2500);
-    });
-    
-    // Resend OTP handling
-    document.getElementById('resendOtp').addEventListener('click', function(e) {
-      e.preventDefault();
-      const messageEl = document.getElementById('otp-message');
-      const email = localStorage.getItem('signupEmail') || 'your email';
-      const phone = localStorage.getItem('signupPhone') || 'your phone';
-      
-      messageEl.textContent = "Resending OTP...";
-      messageEl.style.color = document.body.classList.contains('dark-theme') ? "#aaaaaa" : "#555555";
-      
-      // Simulate OTP resend
-      setTimeout(() => {
-        messageEl.textContent = `OTP resent to ${phone} and ${email}`;
-        messageEl.style.color = document.body.classList.contains('dark-theme') ? "#4caf50" : "#388e3c";
-      }, 1500);
-    });
-    
-    // Navigation functions
-    function openSignupPage() {
-      window.location.href = "index.html";
-    }
-    
-    // Theme toggle functionality
-    const themeToggle = document.getElementById('themeToggle');
-    const themeIcon = themeToggle.querySelector('i');
-    
-    // Check for saved theme preference
-    if (localStorage.getItem('theme') === 'dark') {
-      document.body.classList.add('dark-theme');
-      themeIcon.classList.remove('fa-moon');
-      themeIcon.classList.add('fa-sun');
-    }
-    
-    themeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('dark-theme');
-      
-      if (document.body.classList.contains('dark-theme')) {
-        themeIcon.classList.remove('fa-moon');
-        themeIcon.classList.add('fa-sun');
-        localStorage.setItem('theme', 'dark');
-      } else {
-        themeIcon.classList.remove('fa-sun');
-        themeIcon.classList.add('fa-moon');
-        localStorage.setItem('theme', 'light');
-      }
-    });
-    
-    // Initialize air bubbles
-    window.addEventListener('load', createAirBubbles);
-  </script>
+  <script src="scripts.js">
+  // // Create air bubbles for visualization
+  // function createAirBubbles() {
+  //   const container = document.getElementById('air-visualization');
+  //   const bubbleCount = 15;
+
+  //   for (let i = 0; i < bubbleCount; i++) {
+  //     const bubble = document.createElement('div');
+  //     bubble.classList.add('air-bubble');
+
+  //     const size = Math.floor(Math.random() * 80) + 20;
+  //     bubble.style.width = `${size}px`;
+  //     bubble.style.height = `${size}px`;
+  //     bubble.style.left = `${Math.random() * 100}%`;
+  //     bubble.style.setProperty('--x-offset', Math.random() * 0.4 - 0.2);
+  //     bubble.style.animationDuration = `${Math.floor(Math.random() * 15) + 10}s`;
+  //     bubble.style.animationDelay = `${Math.random() * 5}s`;
+
+  //     container.appendChild(bubble);
+  //   }
+  // }
+
+  // // Get email from query params
+  // const urlParams = new URLSearchParams(window.location.search);
+  // const email = urlParams.get('email');
+  //   if (!email) {
+  //   alert("Invalid access. Email is missing from URL.");
+  //   window.location.href = "signup.html"; // or show a message
+  // }
+
+  // // Form submission handling
+  // document.getElementById('otpForm').addEventListener('submit', async function (e) {
+  //   e.preventDefault();
+
+  //   const otp = document.getElementById('otp').value;
+  //   const messageEl = document.getElementById('otp-message');
+  //   const submitBtn = document.querySelector('.submit-btn');
+  //   const loadingOverlay = document.getElementById('loadingOverlay');
+
+  //   // OTP validation
+  //   if (!otp) {
+  //     messageEl.textContent = "Please enter the OTP";
+  //     return;
+  //   }
+
+  //   if (!/^\d{6}$/.test(otp)) {
+  //     messageEl.textContent = "OTP must be a 6-digit number";
+  //     return;
+  //   }
+
+  //   // Show loading states
+  //   submitBtn.classList.add('loading');
+  //   messageEl.textContent = "Verifying OTP...";
+  //   messageEl.style.color = document.body.classList.contains('dark-theme') ? "#aaaaaa" : "#555555";
+
+  //   loadingOverlay.classList.add('active');
+
+  //   // ✅ Call backend to verify OTP
+  //   try {
+  //     const res = await fetch("http://localhost:5000/api/verify-otp", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ email, otp }),
+  //     });
+
+  //     const data = await res.json();
+  //     loadingOverlay.classList.remove('active');
+  //     submitBtn.classList.remove('loading');
+
+  //     if (res.ok) {
+  //       messageEl.textContent = "OTP verified successfully! Redirecting...";
+  //       messageEl.style.color = document.body.classList.contains('dark-theme') ? "#4caf50" : "#388e3c";
+  //       setTimeout(() => {
+  //         window.location.href = "signin.html";
+  //       }, 1500);
+  //     } else {
+  //       messageEl.textContent = data.message || "Verification failed";
+  //       messageEl.style.color = "red";
+  //     }
+  //   } catch (error) {
+  //     console.error("OTP verification error:", error);
+  //     messageEl.textContent = "❌ Server error. Try again later.";
+  //     messageEl.style.color = "red";
+  //     loadingOverlay.classList.remove('active');
+  //     submitBtn.classList.remove('loading');
+  //   }
+  // });
+
+  // // Resend OTP handling (optional, should also trigger backend logic later)
+  // document.getElementById('resendOtp').addEventListener('click', async function (e) {
+  //   e.preventDefault();
+  //   const messageEl = document.getElementById('otp-message');
+
+  //   messageEl.textContent = "Resending OTP...";
+  //   messageEl.style.color = document.body.classList.contains('dark-theme') ? "#aaaaaa" : "#555555";
+
+  //   // Optionally add API call to resend OTP here
+  //   setTimeout(() => {
+  //     messageEl.textContent = `OTP resent to ${email}`;
+  //     messageEl.style.color = document.body.classList.contains('dark-theme') ? "#4caf50" : "#388e3c";
+  //   }, 1500);
+  // });
+
+  // // Navigation
+  // function openSignupPage() {
+  //   window.location.href = "index.html";
+  // }
+
+  // // Theme toggle functionality
+  // const themeToggle = document.getElementById('themeToggle');
+  // const themeIcon = themeToggle.querySelector('i');
+
+  // if (localStorage.getItem('theme') === 'dark') {
+  //   document.body.classList.add('dark-theme');
+  //   themeIcon.classList.remove('fa-moon');
+  //   themeIcon.classList.add('fa-sun');
+  // }
+
+  // themeToggle.addEventListener('click', () => {
+  //   document.body.classList.toggle('dark-theme');
+
+  //   if (document.body.classList.contains('dark-theme')) {
+  //     themeIcon.classList.remove('fa-moon');
+  //     themeIcon.classList.add('fa-sun');
+  //     localStorage.setItem('theme', 'dark');
+  //   } else {
+  //     themeIcon.classList.remove('fa-sun');
+  //     themeIcon.classList.add('fa-moon');
+  //     localStorage.setItem('theme', 'light');
+  //   }
+  // });
+
+  // // Initialize visual effects
+  // window.addEventListener('load', createAirBubbles);
+</script>
 </body>
 </html>

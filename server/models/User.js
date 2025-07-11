@@ -8,6 +8,9 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     address: { type: String },
     // preferences: { type: String },
+    isVerified: { type: Boolean, default: false },
+    otp: { type: String },
+    otpExpires:{ type: Date },
     createdAt: { type: Date, default: Date.now }
 });
 

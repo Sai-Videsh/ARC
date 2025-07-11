@@ -4,6 +4,7 @@
 node_modules/
 .env
 package-lock.json
+test-file.js
 
 # Logs
 npm-debug.log*
