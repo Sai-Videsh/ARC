@@ -140,17 +140,129 @@ document.getElementById("otpForm")?.addEventListener("submit", async (e) => {
 });
 
 // ✅ Resend OTP Handler
-document.getElementById("resendOtp")?.addEventListener("click", async (e) => {
-  e.preventDefault();
-  const messageEl = document.getElementById("otp-message");
-  const urlParams = new URLSearchParams(window.location.search);
-  const email = urlParams.get("email");
-  messageEl.textContent = "Resending OTP...";
-  setTimeout(() => {
-    messageEl.textContent = `OTP resent to ${email}`;
-    messageEl.style.color = "#4caf50";
-  }, 1500);
+// document.getElementById('resendOtp')?.addEventListener('click', async function (e) {
+//   e.preventDefault();
+
+//   const messageEl = document.getElementById('otp-message');
+//   const resendBtn = document.getElementById('resendOtp');
+//   const email = new URLSearchParams(window.location.search).get('email');
+
+//   if (!email) {
+//     messageEl.textContent = "No email found to resend OTP";
+//     return;
+//   }
+
+//   // Disable button and start countdown
+//   let countdown = 60;
+//   resendBtn.disabled = true;
+//   resendBtn.textContent = `Resend OTP in ${countdown}s`;
+//   const timer = setInterval(() => {
+//     countdown--;
+//     resendBtn.textContent = `Resend OTP in ${countdown}s`;
+
+//     if (countdown <= 0) {
+//       clearInterval(timer);
+//       resendBtn.textContent = "Resend OTP";
+//       resendBtn.disabled = false;
+//     }
+//   }, 1000);
+
+//   messageEl.textContent = "Resending OTP...";
+//   messageEl.style.color = "#888";
+
+//   try {
+//     const res = await fetch("http://localhost:5000/api/resend-otp", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({ email }),
+//     });
+
+//     const result = await res.json();
+
+//     if (res.ok) {
+//       messageEl.textContent = "✅ OTP resent successfully!";
+//       messageEl.style.color = "#4caf50";
+//     } else {
+//       messageEl.textContent = result.message || "Failed to resend OTP";
+//       messageEl.style.color = "red";
+//     }
+//   } catch (err) {
+//     messageEl.textContent = "❌ Server error while resending OTP";
+//     messageEl.style.color = "red";
+//   }
+// });
+
+function startResendOtpTimer(duration = 60) {
+  const resendBtn = document.getElementById('resendOtp');
+  let countdown = duration;
+
+  resendBtn.disabled = true;
+  resendBtn.textContent = `Resend OTP in ${countdown}s`;
+
+  const interval = setInterval(() => {
+    countdown--;
+    resendBtn.textContent = `Resend OTP in ${countdown}s`;
+
+    if (countdown <= 0) {
+      clearInterval(interval);
+      resendBtn.disabled = false;
+      resendBtn.textContent = "Resend OTP";
+    }
+  }, 1000);
+}
+
+// ✅ Call this on page load automatically
+window.addEventListener('load', () => {
+  if (window.location.pathname.includes("otp.html")) {
+    startResendOtpTimer(); // ⏳ Start 60 sec timer immediately on page load
+  }
 });
+
+
+// ✅ Resend OTP Button Click
+document.getElementById('resendOtp')?.addEventListener('click', async function (e) {
+  e.preventDefault();
+
+  const resendBtn = document.getElementById('resendOtp');
+  const messageEl = document.getElementById('otp-message');
+  const email = new URLSearchParams(window.location.search).get('email');
+
+  // Prevent clicking when disabled
+  if (resendBtn.disabled) return;
+
+  if (!email) {
+    messageEl.textContent = "❌ Email missing. Cannot resend OTP.";
+    return;
+  }
+
+  // Immediately disable button and restart timer
+  startResendOtpTimer();
+
+  messageEl.textContent = "Resending OTP...";
+  messageEl.style.color = "#888";
+
+  try {
+    const res = await fetch("http://localhost:5000/api/resend-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      messageEl.textContent = "✅ OTP resent successfully!";
+      messageEl.style.color = "#4caf50";
+    } else {
+      messageEl.textContent = result.message || "Failed to resend OTP";
+      messageEl.style.color = "red";
+    }
+  } catch (err) {
+    messageEl.textContent = "❌ Server error while resending OTP";
+    messageEl.style.color = "red";
+  }
+});
+
 
 // ✅ DOM Ready
 document.addEventListener("DOMContentLoaded", () => {

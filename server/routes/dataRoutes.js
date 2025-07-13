@@ -104,6 +104,42 @@ router.post('/verify-otp', async (req, res) => {
   }
 });
 
+// 📌 Resend OTP
+router.post('/resend-otp', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: "User already verified" });
+    }
+
+    const otp = generateOTP();
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
+
+    user.otp = otp;
+    user.otpExpires = otpExpiry;
+    await user.save();
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to: email,
+      subject: "🔁 Resent OTP for ARC Account",
+      html: `<h3>Your new OTP is: ${otp}</h3><p>It expires in 10 minutes.</p>`,
+    });
+
+    res.status(200).json({ message: "OTP resent successfully" });
+
+  } catch (error) {
+    console.error("Resend OTP error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
 
 // ✅ Signin route (Fix completed)
 router.post('/signin', async (req, res) => {
