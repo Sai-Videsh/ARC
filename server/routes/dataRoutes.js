@@ -168,6 +168,15 @@ router.get('/user/:id', async (req, res) => {
       res.status(500).json({ message: 'Server error', error: error.message });
     }
   });
+
+  // ✅ Protected route example
+router.get('/profile', (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Not authenticated' });
+  }
+  res.status(200).json({ user: req.user });
+});
+
   
 
 module.exports = router;

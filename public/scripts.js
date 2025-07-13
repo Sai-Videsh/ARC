@@ -1,3 +1,4 @@
+// ✅ Air bubble animation
 function createAirBubbles() {
   const container = document.getElementById("air-visualization");
   const bubbleCount = 15;
@@ -16,7 +17,7 @@ function createAirBubbles() {
   }
 }
 
-// ========== THEME TOGGLE ==========
+// ✅ Theme toggle functionality
 const themeToggle = document.getElementById("themeToggle");
 if (themeToggle) {
   const themeIcon = themeToggle.querySelector("i");
@@ -25,6 +26,7 @@ if (themeToggle) {
     themeIcon.classList.remove("fa-moon");
     themeIcon.classList.add("fa-sun");
   }
+
   themeToggle.addEventListener("click", () => {
     document.body.classList.toggle("dark-theme");
     if (document.body.classList.contains("dark-theme")) {
@@ -39,7 +41,7 @@ if (themeToggle) {
   });
 }
 
-// ========== PASSWORD VISIBILITY ==========
+// ✅ Password visibility toggle
 const passwordToggles = document.querySelectorAll(".password-toggle");
 passwordToggles.forEach((toggle) => {
   toggle.addEventListener("click", () => {
@@ -54,6 +56,12 @@ passwordToggles.forEach((toggle) => {
   });
 });
 
+// ✅ OTP validation
+function validateOTP(otp) {
+  return /^\d{6}$/.test(otp);
+}
+
+// ✅ Password validation (used in signup)
 function validatePasswords() {
   const password = document.getElementById("password")?.value;
   const confirmPassword = document.getElementById("confirmPassword")?.value;
@@ -66,6 +74,7 @@ function validatePasswords() {
   return true;
 }
 
+// ✅ Navigation helper
 function openSignupPage() {
   window.location.href = "signup.html";
 }
@@ -73,36 +82,36 @@ function openSigninPage() {
   window.location.href = "signin.html";
 }
 
-// ========== OTP VERIFICATION FROM otp.html ==========
-const urlParams = new URLSearchParams(window.location.search);
-const email = urlParams.get('email');
-if (window.location.pathname.includes("otp.html") && !email) {
-  alert("Invalid access. Email is missing from URL.");
-  window.location.href = "signup.html";
-}
+// ✅ Google Login
+document.getElementById("googleLoginBtn")?.addEventListener("click", () => {
+  window.location.href = "http://localhost:5000/auth/google"; // change if deployed
+});
 
-document.getElementById('otpForm')?.addEventListener('submit', async function (e) {
+// ✅ OTP Page Handler (otp.html)
+document.getElementById("otpForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
+  const otp = document.getElementById("otp").value;
+  const messageEl = document.getElementById("otp-message");
+  const submitBtn = document.querySelector(".submit-btn");
+  const loadingOverlay = document.getElementById("loadingOverlay");
 
-  const otp = document.getElementById('otp').value;
-  const messageEl = document.getElementById('otp-message');
-  const submitBtn = document.querySelector('.submit-btn');
-  const loadingOverlay = document.getElementById('loadingOverlay');
+  const urlParams = new URLSearchParams(window.location.search);
+  const email = urlParams.get("email");
 
-  if (!otp) {
-    messageEl.textContent = "Please enter the OTP";
+  if (!email) {
+    alert("Email is missing from URL. Redirecting...");
+    window.location.href = "signup.html";
     return;
   }
 
-  if (!/^\d{6}$/.test(otp)) {
+  if (!validateOTP(otp)) {
     messageEl.textContent = "OTP must be a 6-digit number";
     return;
   }
 
-  submitBtn.classList.add('loading');
+  submitBtn.classList.add("loading");
+  loadingOverlay?.classList.add("active");
   messageEl.textContent = "Verifying OTP...";
-  messageEl.style.color = document.body.classList.contains('dark-theme') ? "#aaaaaa" : "#555555";
-  loadingOverlay.classList.add('active');
 
   try {
     const res = await fetch("http://localhost:5000/api/verify-otp", {
@@ -110,81 +119,86 @@ document.getElementById('otpForm')?.addEventListener('submit', async function (e
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, otp }),
     });
-
     const data = await res.json();
-    loadingOverlay.classList.remove('active');
-    submitBtn.classList.remove('loading');
-
     if (res.ok) {
-      messageEl.textContent = "OTP verified successfully! Redirecting...";
-      messageEl.style.color = document.body.classList.contains('dark-theme') ? "#4caf50" : "#388e3c";
+      messageEl.textContent = "OTP verified! Redirecting...";
+      messageEl.style.color = "#4caf50";
       setTimeout(() => {
         window.location.href = "signin.html";
       }, 1500);
     } else {
-      messageEl.textContent = data.message || "Verification failed";
+      messageEl.textContent = data.message || "Invalid OTP";
       messageEl.style.color = "red";
     }
-  } catch (error) {
-    console.error("OTP verification error:", error);
-    messageEl.textContent = "❌ Server error. Try again later.";
-    messageEl.style.color = "red";
-    loadingOverlay.classList.remove('active');
-    submitBtn.classList.remove('loading');
+  } catch (err) {
+    console.error("❌ OTP error:", err);
+    messageEl.textContent = "Server error. Try again later.";
+  } finally {
+    submitBtn.classList.remove("loading");
+    loadingOverlay?.classList.remove("active");
   }
 });
 
-document.getElementById('resendOtp')?.addEventListener('click', async function (e) {
+// ✅ Resend OTP Handler
+document.getElementById("resendOtp")?.addEventListener("click", async (e) => {
   e.preventDefault();
-  const messageEl = document.getElementById('otp-message');
+  const messageEl = document.getElementById("otp-message");
+  const urlParams = new URLSearchParams(window.location.search);
+  const email = urlParams.get("email");
   messageEl.textContent = "Resending OTP...";
-  messageEl.style.color = document.body.classList.contains('dark-theme') ? "#aaaaaa" : "#555555";
-
   setTimeout(() => {
     messageEl.textContent = `OTP resent to ${email}`;
-    messageEl.style.color = document.body.classList.contains('dark-theme') ? "#4caf50" : "#388e3c";
+    messageEl.style.color = "#4caf50";
   }, 1500);
 });
 
-// ========== FORM SUBMISSION HANDLERS ==========
+// ✅ DOM Ready
 document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("load", createAirBubbles);
 
-  const signupForm = document.getElementById("bdy") || document.getElementById("signupForm");
+  const signupForm = document.getElementById("signupForm");
   const signinForm = document.getElementById("signinForm");
+   const googleBtn = document.getElementById("googleLoginBtn"); // ✅ Google login button
 
+  // ✅ Google login button handler
+  if (googleBtn) {
+    googleBtn.addEventListener("click", () => {
+      window.location.href = "http://localhost:5000/auth/google"; // ✅ Your backend route
+    });
+  }
+
+  // ✅ Signup form submit
   if (signupForm) {
     signupForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-
-      const name = document.getElementById("fullName").value;
+      const fullName = document.getElementById("fullName").value;
       const phone = document.getElementById("phone").value;
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       const confirmPassword = document.getElementById("confirmPassword").value;
       const address = document.getElementById("address").value;
-      const messageEl = document.getElementById("signup-message") || document.getElementById("error");
+      const messageEl = document.getElementById("signup-message");
       const submitBtn = document.querySelector(".submit-btn");
       const loadingOverlay = document.getElementById("loadingOverlay");
 
-      if (!name || !phone || !email || !password || !confirmPassword || !address) {
+      if (!fullName || !phone || !email || !password || !confirmPassword || !address) {
         messageEl.textContent = "Please fill in all fields";
         return;
       }
-      if (name.length < 2) {
+      if (fullName.length < 2) {
         messageEl.textContent = "Full name must be at least 2 characters";
         return;
       }
       if (!/^\+?\d{10,15}$/.test(phone)) {
-        messageEl.textContent = "Please enter a valid phone number";
+        messageEl.textContent = "Invalid phone number";
         return;
       }
-      // if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
-      //   messageEl.textContent = "Please enter a valid email address";
-      //   return;
-      // }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        messageEl.textContent = "Invalid email address";
+        return;
+      }
       if (password.length < 6) {
-        messageEl.textContent = "Password must be at least 6 characters";
+        messageEl.textContent = "Password too short";
         return;
       }
       if (password !== confirmPassword) {
@@ -192,18 +206,21 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       if (address.length < 10) {
-        messageEl.textContent = "Please enter a valid address";
+        messageEl.textContent = "Invalid address";
         return;
       }
 
-      submitBtn?.classList.add("loading");
       messageEl.textContent = "Creating account...";
+      submitBtn.classList.add("loading");
+      loadingOverlay?.classList.add("active");
 
-      setTimeout(() => {
-        loadingOverlay?.classList.add("active");
-      }, 500);
-
-      const formData = { name, phone, email, password, address };
+      const formData = {
+        name: fullName,
+        phone,
+        email,
+        password,
+        address,
+      };
 
       try {
         const response = await fetch("http://localhost:5000/api/signup", {
@@ -214,15 +231,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const result = await response.json();
         if (response.ok) {
-          messageEl.textContent = "Account created successfully! Redirecting...";
+          messageEl.textContent = "Account created! Redirecting...";
           setTimeout(() => {
             window.location.href = `otp.html?email=${encodeURIComponent(email)}`;
           }, 1500);
         } else {
-          messageEl.textContent = result.message || result.msg || "Signup failed";
+          messageEl.textContent = result.message || "Signup failed";
         }
       } catch (error) {
-        messageEl.textContent = "Error signing up";
+        messageEl.textContent = "Error signing up. Try again.";
       } finally {
         loadingOverlay?.classList.remove("active");
         submitBtn?.classList.remove("loading");
@@ -230,42 +247,56 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // ✅ Signin form submit
   if (signinForm) {
     signinForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const formData = {
-        email: document.getElementById("email").value,
-        password: document.getElementById("password").value,
-      };
-      const messageSpan = document.getElementById("signin-message") || document.getElementById("error");
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const messageEl = document.getElementById("signin-message");
+      const submitBtn = document.querySelector(".submit-btn");
+      const loadingOverlay = document.getElementById("loadingOverlay");
+
+      if (!email || !password) {
+        messageEl.textContent = "Please fill in all fields";
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        messageEl.textContent = "Invalid email";
+        return;
+      }
+      if (password.length < 6) {
+        messageEl.textContent = "Password too short";
+        return;
+      }
+
+      submitBtn.classList.add("loading");
+      messageEl.textContent = "Authenticating...";
+      loadingOverlay.classList.add("active");
 
       try {
         const response = await fetch("http://localhost:5000/api/signin", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({ email, password }),
         });
-
         const result = await response.json();
-        const message = result.msg || result.message || "Unknown response";
-
         if (response.status === 200) {
+          messageEl.textContent = "Login successful! Redirecting...";
           localStorage.setItem("userId", result.user.id);
           localStorage.setItem("userEmail", result.user.email);
           localStorage.setItem("userName", result.user.name);
-          messageSpan.textContent = message;
-          messageSpan.style.color = "green";
           setTimeout(() => {
             window.location.href = "dashboard1.html";
           }, 1200);
         } else {
-          messageSpan.textContent = message;
-          messageSpan.style.color = "red";
+          messageEl.textContent = result.message || "Login failed";
         }
-      } catch (error) {
-        console.error("🚨 SIGNIN ERROR:", error);
-        messageSpan.textContent = "❌ Server error. Please try again.";
-        messageSpan.style.color = "red";
+      } catch (err) {
+        messageEl.textContent = "Server error. Try again.";
+      } finally {
+        submitBtn.classList.remove("loading");
+        loadingOverlay.classList.remove("active");
       }
     });
   }

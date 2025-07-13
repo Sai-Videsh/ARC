@@ -54,7 +54,7 @@ If want to do things seperately,
 
 3. Access the services:
 
-* Frontend: [http://localhost:8080]
+<!-- * Frontend: [http://localhost:8080] -->
 * Backend API: [http://localhost:5000/api]
 
 4. Stop the services (but retain images for faster next start):
