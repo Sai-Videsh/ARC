@@ -13,7 +13,21 @@
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
     }
-    
+    #resendOtpLink {
+  color: #888; /* Default gray when disabled */
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+#resendOtpLink.enabled {
+  color: #ffffff; /* White when enabled */
+}
+
+#resendOtpLink[disabled] {
+  color: #888;
+  pointer-events: none;
+  opacity: 0.5;
+}
     :root {
       /* Light Theme */
       --light-bg: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
@@ -928,7 +942,7 @@
           </div>
           
           <div class="form-footer">
-            <a href="#forgot-password">Forgot password?</a>
+            <a href="#" id="forgotPasswordLink">Forgot password?</a>
           </div>
           
           <span id="signin-message"></span>
@@ -958,6 +972,66 @@
             Don't have an account? <a href="signup.html">Sign Up</a>
           </p>
         </form>
+
+        <!-- Step 1: Email input for password reset -->
+        <div id="forgotStep1" class="forgot-section" style="display: none;">
+          <div class="form-group">
+            <label for="resetEmail">Enter your email</label>
+            <div class="input-with-icon">
+              <i class="fas fa-envelope"></i>
+              <input type="email" id="resetEmail" placeholder="you@example.com" required />
+            </div>
+          </div>
+          <span id="forgot-message1"></span>
+          <button type="button" class="submit-btn" id="sendOtpBtn">
+            <span class="icon"><i class="fas fa-paper-plane"></i></span>
+            <span>Send OTP</span>
+          </button>
+        </div>
+
+        <!-- Step 2: OTP verification -->
+        <div id="forgotStep2" class="forgot-section" style="display: none;">
+          <div class="form-group">
+            <label for="resetOtp">Enter the OTP</label>
+            <div class="input-with-icon">
+              <i class="fas fa-key"></i>
+              <input type="text" id="resetOtp" placeholder="6-digit OTP" required />
+            </div>
+          </div>
+          <span id="forgot-message2"></span>
+          <button type="button" class="submit-btn" id="verifyOtpBtn">
+            <span class="icon"><i class="fas fa-check-circle"></i></span>
+            <span>Verify OTP</span>
+          </button>
+          <div style="margin-top: 12px; text-align:center; font-size: 0.9rem;">
+            <span id="otp-timer-text">Resend OTP in 30s</span>
+            <a href="#" id="resendOtpLink" style="margin-left:10px; pointer-events: none; opacity: 0.5;">Resend OTP</a>
+          </div>
+        </div>
+
+        <!-- Step 3: Set new password -->
+        <div id="forgotStep3" class="forgot-section" style="display: none;">
+          <div class="form-group">
+            <label for="newPassword">New Password</label>
+            <div class="input-with-icon">
+              <i class="fas fa-lock"></i>
+              <input type="password" id="newPassword" placeholder="New password" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="confirmNewPassword">Confirm Password</label>
+            <div class="input-with-icon">
+              <i class="fas fa-lock"></i>
+              <input type="password" id="confirmNewPassword" placeholder="Confirm password" required />
+            </div>
+          </div>
+          <span id="forgot-message3"></span>
+          <button type="button" class="submit-btn" id="resetPasswordBtn">
+            <span class="icon"><i class="fas fa-redo-alt"></i></span>
+            <span>Reset Password</span>
+          </button>
+        </div>
+
       </div>
     </div>
   </section>

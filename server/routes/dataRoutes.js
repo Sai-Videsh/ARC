@@ -8,6 +8,7 @@ const nodemailer = require('nodemailer');
 // ✅ Email setup (move to .env in production)
 const transporter = nodemailer.createTransport({
   service: 'gmail',
+  pool: true,
   auth: {
     user: process.env.GMAIL_USER, // ✅ From .env
     pass: process.env.GMAIL_PASS,
@@ -43,7 +44,7 @@ router.post('/signup', async (req, res) => {
     const user = new User({
       name,
       phone,
-      email,
+      email: email.trim().toLowerCase(),  // 🔥 force lowercase
       password: hashedPassword,
       address,
       otp,
@@ -139,6 +140,65 @@ router.post('/resend-otp', async (req, res) => {
     console.error("Resend OTP error:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
+});
+
+// @route   POST /api/request-password-reset
+router.post('/request-password-reset', async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) return res.status(404).json({ message: "Email not found" });
+
+  const otp = generateOTP();
+  user.otp = otp;
+  user.otpExpires = Date.now() + 10 * 60 * 1000;
+  await user.save();
+
+  await transporter.sendMail({
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: 'Password Reset OTP',
+    html: `<p>Your OTP is: <b>${otp}</b>. It will expire in 10 minutes.</p>`
+  });
+
+  res.json({ message: "OTP sent to your email" });
+});
+
+// @route   POST /api/verify-password-reset-otp
+router.post('/verify-password-reset-otp', async (req, res) => {
+  console.log("OTP verify hit");
+  const { email, otp } = req.body;
+  console.log("Received email:", email); 
+  const normalizedEmail = email.trim().toLowerCase();
+  console.log("Normalized email:", normalizedEmail); 
+  const user = await User.findOne({ email: normalizedEmail });
+
+  if (!user) {
+    console.log("User not found for email:", normalizedEmail);
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  if (String(user.otp) !== String(otp)) {
+    return res.status(400).json({ message: "Invalid OTP" });
+  }
+
+  if (user.otpExpires < Date.now()) {
+    return res.status(400).json({ message: "OTP Expired" });
+  }
+
+  return res.status(200).json({ message: "OTP verified" });
+});
+
+// @route   POST /api/reset-password
+router.post('/reset-password', async (req, res) => {
+  const { email, newPassword } = req.body;
+  const hashed = await bcrypt.hash(newPassword, 10);
+
+  await User.findOneAndUpdate(
+    { email },
+    { password: hashed, otp: null, otpExpires: null }
+  );
+
+  res.json({ message: "Password reset successful" });
 });
 
 // ✅ Signin route (Fix completed)

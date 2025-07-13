@@ -16,6 +16,7 @@ function createAirBubbles() {
     container.appendChild(bubble);
   }
 }
+let forgotEmail = "";
 
 // ✅ Theme toggle functionality
 const themeToggle = document.getElementById("themeToggle");
@@ -411,5 +412,256 @@ document.addEventListener("DOMContentLoaded", () => {
         loadingOverlay.classList.remove("active");
       }
     });
+
+    // Forgot Password Flow
+// ======================== FORGOT PASSWORD FLOW ========================
+
+const forgotLink = document.getElementById("forgotPasswordLink");
+const forgotStep1 = document.getElementById("forgotStep1");
+const forgotStep2 = document.getElementById("forgotStep2");
+const forgotStep3 = document.getElementById("forgotStep3");
+
+const forgotEmailInput = document.getElementById("resetEmail");
+const otpInput = document.getElementById("resetOtp");
+const newPassInput = document.getElementById("newPassword");
+const confirmPassInput = document.getElementById("confirmNewPassword");
+
+const forgotMsg1 = document.getElementById("forgot-message1");
+const forgotMsg2 = document.getElementById("forgot-message2");
+const forgotMsg3 = document.getElementById("forgot-message3");
+
+const sendOtpBtn = document.getElementById("sendOtpBtn");
+const verifyOtpBtn = document.getElementById("verifyOtpBtn");
+const resetPasswordBtn = document.getElementById("resetPasswordBtn");
+
+let forgotEmail = "";
+
+// ✅ Step 0: When "Forgot Password?" is clicked
+forgotLink?.addEventListener("click", (e) => {
+  e.preventDefault();
+  document.getElementById("signinForm").style.display = "none";
+  forgotStep1.style.display = "block";
+});
+
+// ✅ Step 1: Request OTP
+// sendOtpBtn?.addEventListener("click", async () => {
+//   forgotEmail = forgotEmailInput.value;
+
+//   if (!forgotEmail) {
+//     forgotMsg1.textContent = "Please enter your email.";
+//     return;
+//   }
+
+//   try {
+//     const res = await fetch("http://localhost:5000/api/request-password-reset", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({ email: forgotEmail }),
+//     });
+
+//     const result = await res.json();
+//     if (res.ok) {
+//       forgotMsg1.textContent = "OTP sent to your email.";
+//       forgotStep1.style.display = "none";
+//       forgotStep2.style.display = "block";
+      
+
+//       setTimeout(() => {
+//         document.getElementById("forgotStep1").style.display = "none";
+//         document.getElementById("forgotStep2").style.display = "block";
+//         startOtpTimer(); // 🔁 Start the resend timer
+//       }, 1500);
+//     } else {
+//       forgotMsg1.textContent = result.message || "Something went wrong.";
+//     }
+//   } catch (err) {
+//     forgotMsg1.textContent = "Server error. Try again later.";
+//   }
+// });
+
+document.getElementById("sendOtpBtn")?.addEventListener("click", async function () {
+  const email = document.getElementById("resetEmail").value.trim();
+  const message1 = document.getElementById("forgot-message1");
+
+  if (!email) {
+    message1.textContent = "Please enter your email.";
+    message1.style.color = "red";
+    return;
+  }
+
+  // Show immediate feedback
+  message1.textContent = "Sending OTP...";
+  message1.style.color = "#888";
+
+  try {
+    const res = await fetch("http://localhost:5000/api/request-password-reset", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      message1.textContent = "✅ OTP sent to your email. Redirecting...";
+      message1.style.color = "green";
+      localStorage.setItem("resetEmail", email.trim().toLowerCase());
+      
+      setTimeout(() => {
+        document.getElementById("forgotStep1").style.display = "none";
+        document.getElementById("forgotStep2").style.display = "block";
+        startOtpTimer();
+      }, 1500); // Increased to 1500ms for better UX after success message
+    } else {
+      message1.textContent = data.message || "Something went wrong.";
+      message1.style.color = "red";
+    }
+  } catch (err) {
+    message1.textContent = "❌ Server error.";
+    message1.style.color = "red";
   }
 });
+// ✅ Step 2: Verify OTP
+verifyOtpBtn?.addEventListener("click", async () => {
+  const otp = otpInput.value;
+  const email = localStorage.getItem("resetEmail"); // Retrieve from localStorage
+
+  if (!email) {
+    forgotMsg2.textContent = "Email missing. Please start over.";
+    return;
+  }
+
+  if (!otp) {
+    forgotMsg2.textContent = "Enter OTP to continue.";
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:5000/api/verify-password-reset-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, otp }),
+    });
+
+    const result = await res.json();
+    if (res.ok) {
+      forgotMsg2.textContent = "OTP verified! Redirecting...";
+      forgotMsg2.style.color = "green";
+      setTimeout(() => {
+        forgotStep2.style.display = "none";
+        forgotStep3.style.display = "block";
+      }, 1500);
+    } else {
+      forgotMsg2.textContent = result.message || "Invalid OTP";
+      forgotMsg2.style.color = "red";
+    }
+  } catch (err) {
+    forgotMsg2.textContent = "Server error.";
+    forgotMsg2.style.color = "red";
+  }
+});
+// ✅ Step 3: Reset Password
+resetPasswordBtn?.addEventListener("click", async () => {
+  const newPassword = newPassInput.value;
+  const confirmPassword = confirmPassInput.value;
+  const email = localStorage.getItem("resetEmail");
+
+  if (!email) {
+    forgotMsg3.textContent = "Email missing. Please start over.";
+    forgotMsg3.style.color = "red";
+    return;
+  }
+
+  if (newPassword !== confirmPassword) {
+    forgotMsg3.textContent = "Passwords do not match!";
+    forgotMsg3.style.color = "red";
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:5000/api/reset-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, newPassword }),
+    });
+
+    const result = await res.json();
+    if (res.ok) {
+      forgotMsg3.textContent = "Password updated! Redirecting...";
+      forgotMsg3.style.color = "green";
+      localStorage.removeItem("resetEmail"); // Clean up
+      setTimeout(() => {
+        window.location.href = "signin.html";
+      }, 2000);
+    } else {
+      forgotMsg3.textContent = result.message || "Reset failed.";
+      forgotMsg3.style.color = "red";
+    }
+  } catch (err) {
+    forgotMsg3.textContent = "Server error. Try again.";
+    forgotMsg3.style.color = "red";
+  }
+});
+
+document.getElementById("resendOtpLink")?.addEventListener("click", async (e) => {
+  e.preventDefault();
+
+  const email = localStorage.getItem("resetEmail");
+  const msg = document.getElementById("forgot-message2");
+
+  if (!email) {
+    msg.textContent = "Email missing. Please start over.";
+    msg.style.color = "red";
+    return;
+  }
+
+  // Show immediate feedback
+  msg.textContent = "Resending OTP...";
+  msg.style.color = "#888";
+
+  try {
+    const res = await fetch("http://localhost:5000/api/request-password-reset", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      msg.textContent = "✅ OTP resent to your email.";
+      msg.style.color = "green";
+      startOtpTimer();
+    } else {
+      msg.textContent = data.message || "Failed to resend OTP.";
+      msg.style.color = "red";
+    }
+  } catch (err) {
+    msg.textContent = "❌ Server error while resending OTP.";
+    msg.style.color = "red";
+  }
+});
+  }
+});
+
+function startOtpTimer() {
+  const resendLink = document.getElementById("resendOtpLink");
+  const timerText = document.getElementById("otp-timer-text");
+  let countdown = 30;
+
+  resendLink.style.pointerEvents = "none";
+  resendLink.style.opacity = "0.5";
+  resendLink.style.color = "#888"; // Gray when disabled
+
+  const timerInterval = setInterval(() => {
+    countdown--;
+    timerText.textContent = `Resend OTP in ${countdown}s`;
+
+    if (countdown <= 0) {
+      clearInterval(timerInterval);
+      timerText.textContent = "";
+      resendLink.style.pointerEvents = "auto";
+      resendLink.style.opacity = "1";
+      resendLink.style.color = "#ffffff"; // White when enabled
+    }
+  }, 1000);
+}
+
