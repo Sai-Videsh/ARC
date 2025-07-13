@@ -16,7 +16,6 @@ function createAirBubbles() {
     container.appendChild(bubble);
   }
 }
-let forgotEmail = "";
 
 // ✅ Theme toggle functionality
 const themeToggle = document.getElementById("themeToggle");
@@ -83,9 +82,17 @@ function openSigninPage() {
   window.location.href = "signin.html";
 }
 
-// ✅ Google Login
+// ✅ Social Login Handlers (Google + Facebook)
 document.getElementById("googleLoginBtn")?.addEventListener("click", () => {
-  window.location.href = "http://localhost:5000/auth/google"; // change if deployed
+  window.location.href = "http://localhost:5000/auth/google"; // Redirect to Google OAuth
+});
+
+document.getElementById("facebookLoginBtn")?.addEventListener("click", () => { // ✅ NEW: Facebook Login handler
+  window.location.href = "http://localhost:5000/auth/facebook"; // Redirect to Facebook OAuth
+});
+
+document.getElementById("appleLoginBtn")?.addEventListener("click", () => { // ✅ NEW: Apple Login handler
+  alert("This feature will be coming soon..."); // Display alert for Apple Login
 });
 
 // ✅ OTP Page Handler (otp.html)
@@ -140,59 +147,6 @@ document.getElementById("otpForm")?.addEventListener("submit", async (e) => {
   }
 });
 
-// ✅ Resend OTP Handler
-// document.getElementById('resendOtp')?.addEventListener('click', async function (e) {
-//   e.preventDefault();
-
-//   const messageEl = document.getElementById('otp-message');
-//   const resendBtn = document.getElementById('resendOtp');
-//   const email = new URLSearchParams(window.location.search).get('email');
-
-//   if (!email) {
-//     messageEl.textContent = "No email found to resend OTP";
-//     return;
-//   }
-
-//   // Disable button and start countdown
-//   let countdown = 60;
-//   resendBtn.disabled = true;
-//   resendBtn.textContent = `Resend OTP in ${countdown}s`;
-//   const timer = setInterval(() => {
-//     countdown--;
-//     resendBtn.textContent = `Resend OTP in ${countdown}s`;
-
-//     if (countdown <= 0) {
-//       clearInterval(timer);
-//       resendBtn.textContent = "Resend OTP";
-//       resendBtn.disabled = false;
-//     }
-//   }, 1000);
-
-//   messageEl.textContent = "Resending OTP...";
-//   messageEl.style.color = "#888";
-
-//   try {
-//     const res = await fetch("http://localhost:5000/api/resend-otp", {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ email }),
-//     });
-
-//     const result = await res.json();
-
-//     if (res.ok) {
-//       messageEl.textContent = "✅ OTP resent successfully!";
-//       messageEl.style.color = "#4caf50";
-//     } else {
-//       messageEl.textContent = result.message || "Failed to resend OTP";
-//       messageEl.style.color = "red";
-//     }
-//   } catch (err) {
-//     messageEl.textContent = "❌ Server error while resending OTP";
-//     messageEl.style.color = "red";
-//   }
-// });
-
 function startResendOtpTimer(duration = 60) {
   const resendBtn = document.getElementById('resendOtp');
   let countdown = duration;
@@ -212,14 +166,6 @@ function startResendOtpTimer(duration = 60) {
   }, 1000);
 }
 
-// ✅ Call this on page load automatically
-window.addEventListener('load', () => {
-  if (window.location.pathname.includes("otp.html")) {
-    startResendOtpTimer(); // ⏳ Start 60 sec timer immediately on page load
-  }
-});
-
-
 // ✅ Resend OTP Button Click
 document.getElementById('resendOtp')?.addEventListener('click', async function (e) {
   e.preventDefault();
@@ -236,9 +182,7 @@ document.getElementById('resendOtp')?.addEventListener('click', async function (
     return;
   }
 
-  // Immediately disable button and restart timer
-  startResendOtpTimer();
-
+  // Show immediate feedback
   messageEl.textContent = "Resending OTP...";
   messageEl.style.color = "#888";
 
@@ -264,19 +208,80 @@ document.getElementById('resendOtp')?.addEventListener('click', async function (
   }
 });
 
-
 // ✅ DOM Ready
 document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("load", createAirBubbles);
 
   const signupForm = document.getElementById("signupForm");
   const signinForm = document.getElementById("signinForm");
-   const googleBtn = document.getElementById("googleLoginBtn"); // ✅ Google login button
+   const verifyBtn = document.getElementById("verifyHumanBtn");
+  const verifyMessage = document.getElementById("verify-message");
+  // const signinForm = document.getElementById("signinForm");
+  const verifyHuman = document.getElementById("verifyHuman");
+  const loadingOverlay = document.getElementById("loadingOverlay");
+  let pageLoadTime = Date.now();
+  let mouseMovements = 0;
 
-  // ✅ Google login button handler
-  if (googleBtn) {
-    googleBtn.addEventListener("click", () => {
-      window.location.href = "http://localhost:5000/auth/google"; // ✅ Your backend route
+  // Track mouse movement with debugging
+  document.addEventListener("mousemove", () => {
+    if (mouseMovements < 10) {
+      mouseMovements++;
+      console.log("Mouse movement detected, count:", mouseMovements); // ✅ Debug log
+    }
+  });
+
+  if (verifyBtn) {
+    verifyBtn.addEventListener("click", async () => {
+      const clickTime = Date.now();
+      const delay = (clickTime - pageLoadTime) / 1000; // Delay in seconds
+      const userAgent = navigator.userAgent || "Unknown Agent"; // ✅ Fallback if undefined
+      console.log("User-Agent before fetch:", userAgent); // ✅ Debug log
+      console.log("Verification attempt - Delay:", delay, "Mouse Movements:", mouseMovements, "User-Agent:", userAgent); // ✅ Debug log
+
+      verifyMessage.textContent = "Verifying... ✨";
+      verifyBtn.classList.add("loading");
+      loadingOverlay?.classList.add("active");
+      verifyHuman.style.display = "block"; // ✅ Ensure visible during verification
+      signinForm.style.display = "none"; // ✅ Ensure hidden during verification
+
+
+      try {
+        const res = await fetch("http://localhost:5000/api/verify-human", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ delay }),
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          verifyMessage.textContent = "✅ You’re human! Login unlocked. 🌟";
+          verifyMessage.style.color = "#4caf50";
+          localStorage.setItem("humanVerified", "true"); // Store verification
+          const randomDelay = 3000 + Math.floor(Math.random() * 2001); // 3000-5000 ms
+          console.log("Delaying redirect for:", randomDelay, "ms");
+          await new Promise(resolve => setTimeout(resolve, randomDelay))
+          verifyHuman.style.display = "none";
+          signinForm.style.display = "block";
+          // setTimeout(() => {
+          //   loadingOverlay?.classList.remove("active");
+          //   window.location.href = "signin.html"; // Redirect to signin page
+          // }, 5000);
+        } else {
+          verifyMessage.textContent = data.message || "Verification failed. Try again.";
+          verifyMessage.style.color = "red";
+          signinForm.style.display = "none"; // ✅ Keep login form hidden on failure
+          loadingOverlay?.classList.remove("active");
+        }
+      } catch (err) {
+        verifyMessage.textContent = "❌ Server error. Try again later.";
+        verifyMessage.style.color = "red";
+        signinForm.style.display = "none"; // ✅ Keep login form hidden on error
+        console.error("Fetch error:", err); // ✅ Debug log
+        loadingOverlay?.classList.remove("active");
+      } finally {
+        verifyBtn.classList.remove("loading");
+        loadingOverlay?.classList.remove("active");
+      }
     });
   }
 
@@ -414,231 +419,197 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Forgot Password Flow
-// ======================== FORGOT PASSWORD FLOW ========================
+    const forgotLink = document.getElementById("forgotPasswordLink");
+    const forgotStep1 = document.getElementById("forgotStep1");
+    const forgotStep2 = document.getElementById("forgotStep2");
+    const forgotStep3 = document.getElementById("forgotStep3");
 
-const forgotLink = document.getElementById("forgotPasswordLink");
-const forgotStep1 = document.getElementById("forgotStep1");
-const forgotStep2 = document.getElementById("forgotStep2");
-const forgotStep3 = document.getElementById("forgotStep3");
+    const forgotEmailInput = document.getElementById("resetEmail");
+    const otpInput = document.getElementById("resetOtp");
+    const newPassInput = document.getElementById("newPassword");
+    const confirmPassInput = document.getElementById("confirmNewPassword");
 
-const forgotEmailInput = document.getElementById("resetEmail");
-const otpInput = document.getElementById("resetOtp");
-const newPassInput = document.getElementById("newPassword");
-const confirmPassInput = document.getElementById("confirmNewPassword");
+    const forgotMsg1 = document.getElementById("forgot-message1");
+    const forgotMsg2 = document.getElementById("forgot-message2");
+    const forgotMsg3 = document.getElementById("forgot-message3");
 
-const forgotMsg1 = document.getElementById("forgot-message1");
-const forgotMsg2 = document.getElementById("forgot-message2");
-const forgotMsg3 = document.getElementById("forgot-message3");
+    const sendOtpBtn = document.getElementById("sendOtpBtn");
+    const verifyOtpBtn = document.getElementById("verifyOtpBtn");
+    const resetPasswordBtn = document.getElementById("resetPasswordBtn");
 
-const sendOtpBtn = document.getElementById("sendOtpBtn");
-const verifyOtpBtn = document.getElementById("verifyOtpBtn");
-const resetPasswordBtn = document.getElementById("resetPasswordBtn");
-
-let forgotEmail = "";
-
-// ✅ Step 0: When "Forgot Password?" is clicked
-forgotLink?.addEventListener("click", (e) => {
-  e.preventDefault();
-  document.getElementById("signinForm").style.display = "none";
-  forgotStep1.style.display = "block";
-});
-
-// ✅ Step 1: Request OTP
-// sendOtpBtn?.addEventListener("click", async () => {
-//   forgotEmail = forgotEmailInput.value;
-
-//   if (!forgotEmail) {
-//     forgotMsg1.textContent = "Please enter your email.";
-//     return;
-//   }
-
-//   try {
-//     const res = await fetch("http://localhost:5000/api/request-password-reset", {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ email: forgotEmail }),
-//     });
-
-//     const result = await res.json();
-//     if (res.ok) {
-//       forgotMsg1.textContent = "OTP sent to your email.";
-//       forgotStep1.style.display = "none";
-//       forgotStep2.style.display = "block";
-      
-
-//       setTimeout(() => {
-//         document.getElementById("forgotStep1").style.display = "none";
-//         document.getElementById("forgotStep2").style.display = "block";
-//         startOtpTimer(); // 🔁 Start the resend timer
-//       }, 1500);
-//     } else {
-//       forgotMsg1.textContent = result.message || "Something went wrong.";
-//     }
-//   } catch (err) {
-//     forgotMsg1.textContent = "Server error. Try again later.";
-//   }
-// });
-
-document.getElementById("sendOtpBtn")?.addEventListener("click", async function () {
-  const email = document.getElementById("resetEmail").value.trim();
-  const message1 = document.getElementById("forgot-message1");
-
-  if (!email) {
-    message1.textContent = "Please enter your email.";
-    message1.style.color = "red";
-    return;
-  }
-
-  // Show immediate feedback
-  message1.textContent = "Sending OTP...";
-  message1.style.color = "#888";
-
-  try {
-    const res = await fetch("http://localhost:5000/api/request-password-reset", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
+    // ✅ Step 0: When "Forgot Password?" is clicked
+    forgotLink?.addEventListener("click", (e) => {
+      e.preventDefault();
+      document.getElementById("signinForm").style.display = "none";
+      forgotStep1.style.display = "block";
     });
 
-    const data = await res.json();
-    if (res.ok) {
-      message1.textContent = "✅ OTP sent to your email. Redirecting...";
-      message1.style.color = "green";
-      localStorage.setItem("resetEmail", email.trim().toLowerCase());
-      
-      setTimeout(() => {
-        document.getElementById("forgotStep1").style.display = "none";
-        document.getElementById("forgotStep2").style.display = "block";
-        startOtpTimer();
-      }, 1500); // Increased to 1500ms for better UX after success message
-    } else {
-      message1.textContent = data.message || "Something went wrong.";
-      message1.style.color = "red";
-    }
-  } catch (err) {
-    message1.textContent = "❌ Server error.";
-    message1.style.color = "red";
-  }
-});
-// ✅ Step 2: Verify OTP
-verifyOtpBtn?.addEventListener("click", async () => {
-  const otp = otpInput.value;
-  const email = localStorage.getItem("resetEmail"); // Retrieve from localStorage
+    // ✅ Step 1: Request OTP
+    document.getElementById("sendOtpBtn")?.addEventListener("click", async function () {
+      const email = document.getElementById("resetEmail").value.trim();
+      const message1 = document.getElementById("forgot-message1");
 
-  if (!email) {
-    forgotMsg2.textContent = "Email missing. Please start over.";
-    return;
-  }
+      if (!email) {
+        message1.textContent = "Please enter your email.";
+        message1.style.color = "red";
+        return;
+      }
 
-  if (!otp) {
-    forgotMsg2.textContent = "Enter OTP to continue.";
-    return;
-  }
+      // Show immediate feedback
+      message1.textContent = "Sending OTP...";
+      message1.style.color = "#888";
 
-  try {
-    const res = await fetch("http://localhost:5000/api/verify-password-reset-otp", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, otp }),
+      try {
+        const res = await fetch("http://localhost:5000/api/request-password-reset", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          message1.textContent = "✅ OTP sent to your email. Redirecting...";
+          message1.style.color = "green";
+          localStorage.setItem("resetEmail", email.trim().toLowerCase());
+          
+          setTimeout(() => {
+            document.getElementById("forgotStep1").style.display = "none";
+            document.getElementById("forgotStep2").style.display = "block";
+            startOtpTimer();
+          }, 1500);
+        } else {
+          message1.textContent = data.message || "Something went wrong.";
+          message1.style.color = "red";
+        }
+      } catch (err) {
+        message1.textContent = "❌ Server error.";
+        message1.style.color = "red";
+      }
     });
 
-    const result = await res.json();
-    if (res.ok) {
-      forgotMsg2.textContent = "OTP verified! Redirecting...";
-      forgotMsg2.style.color = "green";
-      setTimeout(() => {
-        forgotStep2.style.display = "none";
-        forgotStep3.style.display = "block";
-      }, 1500);
-    } else {
-      forgotMsg2.textContent = result.message || "Invalid OTP";
-      forgotMsg2.style.color = "red";
-    }
-  } catch (err) {
-    forgotMsg2.textContent = "Server error.";
-    forgotMsg2.style.color = "red";
-  }
-});
-// ✅ Step 3: Reset Password
-resetPasswordBtn?.addEventListener("click", async () => {
-  const newPassword = newPassInput.value;
-  const confirmPassword = confirmPassInput.value;
-  const email = localStorage.getItem("resetEmail");
+    // ✅ Step 2: Verify OTP
+    verifyOtpBtn?.addEventListener("click", async () => {
+      const otp = otpInput.value;
+      const email = localStorage.getItem("resetEmail");
 
-  if (!email) {
-    forgotMsg3.textContent = "Email missing. Please start over.";
-    forgotMsg3.style.color = "red";
-    return;
-  }
+      if (!email) {
+        forgotMsg2.textContent = "Email missing. Please start over.";
+        forgotMsg2.style.color = "red";
+        return;
+      }
 
-  if (newPassword !== confirmPassword) {
-    forgotMsg3.textContent = "Passwords do not match!";
-    forgotMsg3.style.color = "red";
-    return;
-  }
+      if (!otp) {
+        forgotMsg2.textContent = "Enter OTP to continue.";
+        forgotMsg2.style.color = "red";
+        return;
+      }
 
-  try {
-    const res = await fetch("http://localhost:5000/api/reset-password", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, newPassword }),
+      try {
+        const res = await fetch("http://localhost:5000/api/verify-password-reset-otp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, otp }),
+        });
+
+        const result = await res.json();
+        if (res.ok) {
+          forgotMsg2.textContent = "OTP verified! Redirecting...";
+          forgotMsg2.style.color = "green";
+          setTimeout(() => {
+            forgotStep2.style.display = "none";
+            forgotStep3.style.display = "block";
+          }, 1500);
+        } else {
+          forgotMsg2.textContent = result.message || "Invalid OTP";
+          forgotMsg2.style.color = "red";
+        }
+      } catch (err) {
+        forgotMsg2.textContent = "Server error.";
+        forgotMsg2.style.color = "red";
+      }
     });
 
-    const result = await res.json();
-    if (res.ok) {
-      forgotMsg3.textContent = "Password updated! Redirecting...";
-      forgotMsg3.style.color = "green";
-      localStorage.removeItem("resetEmail"); // Clean up
-      setTimeout(() => {
-        window.location.href = "signin.html";
-      }, 2000);
-    } else {
-      forgotMsg3.textContent = result.message || "Reset failed.";
-      forgotMsg3.style.color = "red";
-    }
-  } catch (err) {
-    forgotMsg3.textContent = "Server error. Try again.";
-    forgotMsg3.style.color = "red";
-  }
-});
+    // ✅ Step 3: Reset Password
+    resetPasswordBtn?.addEventListener("click", async () => {
+      const newPassword = newPassInput.value;
+      const confirmPassword = confirmPassInput.value;
+      const email = localStorage.getItem("resetEmail");
 
-document.getElementById("resendOtpLink")?.addEventListener("click", async (e) => {
-  e.preventDefault();
+      if (!email) {
+        forgotMsg3.textContent = "Email missing. Please start over.";
+        forgotMsg3.style.color = "red";
+        return;
+      }
 
-  const email = localStorage.getItem("resetEmail");
-  const msg = document.getElementById("forgot-message2");
+      if (newPassword !== confirmPassword) {
+        forgotMsg3.textContent = "Passwords do not match!";
+        forgotMsg3.style.color = "red";
+        return;
+      }
 
-  if (!email) {
-    msg.textContent = "Email missing. Please start over.";
-    msg.style.color = "red";
-    return;
-  }
+      try {
+        const res = await fetch("http://localhost:5000/api/reset-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, newPassword }),
+        });
 
-  // Show immediate feedback
-  msg.textContent = "Resending OTP...";
-  msg.style.color = "#888";
-
-  try {
-    const res = await fetch("http://localhost:5000/api/request-password-reset", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
+        const result = await res.json();
+        if (res.ok) {
+          forgotMsg3.textContent = "Password updated! Redirecting...";
+          forgotMsg3.style.color = "green";
+          localStorage.removeItem("resetEmail");
+          setTimeout(() => {
+            window.location.href = "signin.html";
+          }, 2000);
+        } else {
+          forgotMsg3.textContent = result.message || "Reset failed.";
+          forgotMsg3.style.color = "red";
+        }
+      } catch (err) {
+        forgotMsg3.textContent = "Server error. Try again.";
+        forgotMsg3.style.color = "red";
+      }
     });
 
-    const data = await res.json();
-    if (res.ok) {
-      msg.textContent = "✅ OTP resent to your email.";
-      msg.style.color = "green";
-      startOtpTimer();
-    } else {
-      msg.textContent = data.message || "Failed to resend OTP.";
-      msg.style.color = "red";
-    }
-  } catch (err) {
-    msg.textContent = "❌ Server error while resending OTP.";
-    msg.style.color = "red";
-  }
-});
+    document.getElementById("resendOtpLink")?.addEventListener("click", async (e) => {
+      e.preventDefault();
+
+      const email = localStorage.getItem("resetEmail");
+      const msg = document.getElementById("forgot-message2");
+
+      if (!email) {
+        msg.textContent = "Email missing. Please start over.";
+        msg.style.color = "red";
+        return;
+      }
+
+      msg.textContent = "Resending OTP...";
+      msg.style.color = "#888";
+
+      try {
+        const res = await fetch("http://localhost:5000/api/request-password-reset", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          msg.textContent = "✅ OTP resent to your email.";
+          msg.style.color = "green";
+          startOtpTimer();
+        } else {
+          msg.textContent = data.message || "Failed to resend OTP.";
+          msg.style.color = "red";
+        }
+      } catch (err) {
+        msg.textContent = "❌ Server error while resending OTP.";
+        msg.style.color = "red";
+      }
+    });
+
+    
   }
 });
 
@@ -647,9 +618,10 @@ function startOtpTimer() {
   const timerText = document.getElementById("otp-timer-text");
   let countdown = 30;
 
+  resendLink.classList.remove("enabled");
+  resendLink.classList.add("disabled");
   resendLink.style.pointerEvents = "none";
   resendLink.style.opacity = "0.5";
-  resendLink.style.color = "#888"; // Gray when disabled
 
   const timerInterval = setInterval(() => {
     countdown--;
@@ -660,8 +632,8 @@ function startOtpTimer() {
       timerText.textContent = "";
       resendLink.style.pointerEvents = "auto";
       resendLink.style.opacity = "1";
-      resendLink.style.color = "#ffffff"; // White when enabled
+      resendLink.classList.remove("disabled");
+      resendLink.classList.add("enabled");
     }
   }, 1000);
 }
-

@@ -3,9 +3,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
-const session = require('express-session');  // ✅ Added
-const passport = require('passport');        // ✅ Added
-require('./config/passport');                // ✅ NEW: load Google strategy
+const session = require('express-session');  // ✅ Session middleware for auth
+const passport = require('passport');        // ✅ Passport for OAuth
+require('./config/passport');                // ✅ Load Passport config (Google + Facebook)
 
 const dataRoutes = require('./routes/dataRoutes');
 
@@ -16,19 +16,18 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 // ✅ Sessions
 app.use(session({
-  secret: process.env.SESSION_SECRET, // put in .env ideally
+  secret: process.env.SESSION_SECRET, // From .env
   resave: false,
   saveUninitialized: false,
 }));
 
-// ✅ Initialize passport
+// ✅ Initialize Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
-// ✅ Main routes
+// ✅ Main API routes
 app.use('/api', dataRoutes);
 
 // ✅ Google OAuth Routes
@@ -39,18 +38,29 @@ app.get('/auth/google',
 app.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/signin.html' }),
   (req, res) => {
-    res.redirect('/dashboard1.html'); // ✅ Success
+    res.redirect(`/dashboard1.html?userId=${req.user._id}&userEmail=${encodeURIComponent(req.user.email)}&userName=${encodeURIComponent(req.user.name)}`); // ✅ Success redirect with user data
+  }
+);
+
+// ✅ Facebook OAuth Routes (NEW)
+app.get('/auth/facebook',
+  passport.authenticate('facebook', { scope: ['email'] })
+);
+
+app.get('/auth/facebook/callback',
+  passport.authenticate('facebook', { failureRedirect: '/signin.html' }),
+  (req, res) => {
+    res.redirect(`/dashboard1.html?userId=${req.user._id}&userEmail=${encodeURIComponent(req.user.email)}&userName=${encodeURIComponent(req.user.name)}`); // ✅ Success redirect with user data
   }
 );
 
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Routes
+// Routes (already included above, kept for compatibility)
 app.use('/api', dataRoutes);
 
 module.exports = app;
-
 
 // Connect to MongoDB
 const connectDB = require('./db');

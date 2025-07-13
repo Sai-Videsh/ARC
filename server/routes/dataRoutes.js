@@ -4,6 +4,8 @@ const User = require('../models/User'); // ✅ Make sure this schema is correct
 console.log('User model:', User);
 const bcrypt = require('bcryptjs'); // or require('bcrypt');
 const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+const ipRequests = new Map();
 
 // ✅ Email setup (move to .env in production)
 const transporter = nodemailer.createTransport({
@@ -188,6 +190,58 @@ router.post('/verify-password-reset-otp', async (req, res) => {
   return res.status(200).json({ message: "OTP verified" });
 });
 
+router.post('/verify-human', async (req, res) => {
+  const { delay, mouseMovements, userAgent } = req.body;
+  const ip = req.ip || req.headers['x-forwarded-for'] || 'unknown';
+  console.log("Received:", { delay, mouseMovements, userAgent, ip }); // ✅ Debug log
+  // Rate limiting: Check requests from same IP in last 5 minutes
+  const now = Date.now();
+  const ipHistory = ipRequests.get(ip) || [];
+  ipRequests.set(ip, ipHistory.filter(t => now - t < 5 * 60 * 1000)); // Keep 5-min window
+  if (ipHistory.length > 10) { // Limit to 5 requests per 5 minutes
+    return res.status(429).json({ message: 'Too many requests. Try again later.' });
+  }
+  ipRequests.get(ip).push(now);
+
+  // Time delay check: Expect 2–4 seconds for humans
+  if (delay < 1 || delay > 20) { // Allow up to 10s to avoid false negatives
+        console.log("Failed: Delay out of range:", delay); // ✅ Debug log
+    return res.status(400).json({ message: 'Reload the page, click the button in 10 sec..'});
+  }
+
+  // User-Agent check: Detect common bot strings, with safety check
+  if (userAgent && typeof userAgent === 'string') {
+    const botAgents = ['curl', 'python', 'postman', 'wget'];
+    if (botAgents.some(agent => userAgent.toLowerCase().includes(agent))) {
+            console.log("Failed: Suspicious User-Agent:", userAgent); // ✅ Debug log
+      return res.status(400).json({ message: 'Suspicious browser. Use a standard browser.' });
+    }
+  } else {
+    // Log or handle missing userAgent (optional, for debugging)
+    console.log('Standard Browser:', userAgent);
+    // Proceed without User-Agent check if missing (consider this a soft fail)
+  }
+
+  // Mouse movement check: Expect some movement for humans
+  if (mouseMovements < 1) { // At least 1 movement
+        console.log("Failed: Insufficient mouse movements:", mouseMovements); // ✅ Debug log
+    return res.status(400).json({ message: 'Please move your mouse before verifying. 🌐' });
+  }
+
+  // Generate and store a session token with minimal required fields
+  const token = crypto.randomBytes(16).toString('hex');
+  const expiry = new Date(now + 15 * 60 * 1000); // 15-minute expiry
+
+  const user = new User({
+    name: 'VerificationUser', // Dummy name to satisfy required field
+    email: `verify-${token}@example.com`, // Dummy email to satisfy required field
+    humanToken: token,
+    humanTokenExpires: expiry,
+  });
+  await user.save();
+
+  res.status(200).json({ message: 'Verification successful', token });
+});
 // @route   POST /api/reset-password
 router.post('/reset-password', async (req, res) => {
   const { email, newPassword } = req.body;
