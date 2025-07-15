@@ -808,713 +808,755 @@
 <body>
   <div id="root">Loading...</div>
   <script type="text/babel">
-    function handleLogout() {
-  const confirmed = confirm("Are you sure you want to logout?");
-  if (confirmed) {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("profileData");
-    window.location.href = "signin.html";
+  function handleLogout() {
+    const confirmed = confirm("Are you sure you want to logout?");
+    if (confirmed) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("profileData");
+      window.location.href = "signin.html";
+    }
   }
-}
 
-    if (!window.React || !window.ReactDOM) {
-      console.error("React or ReactDOM failed to load. Check CDN links or network.");
-      document.getElementById('root').innerText = "Error: Failed to load React. Check console for details.";
-    } else {
-      const { useState, useEffect } = React;
+  if (!window.React || !window.ReactDOM) {
+    console.error("React or ReactDOM failed to load. Check CDN links or network.");
+    document.getElementById('root').innerText = "Error: Failed to load React. Check console for details.";
+  } else {
+    const { useState, useEffect } = React;
 
-      // Dashboard Component
-      const DashboardSection = ({ profileData }) => {
-        // Spending chart data
-        const spendingData = [
-          { day: 'Mon', amount: 120 },
-          { day: 'Tue', amount: 80 },
-          { day: 'Wed', amount: 210 },
-          { day: 'Thu', amount: 150 },
-          { day: 'Fri', amount: 180 },
-          { day: 'Sat', amount: 240 },
-          { day: 'Sun', amount: 90 }
-        ];
-        
-        // Find max for chart scaling
-        const maxAmount = Math.max(...spendingData.map(d => d.amount));
-        
-        return (
-          <div className="section">
-            <h2><i className="fas fa-tachometer-alt"></i> Dashboard</h2>
-            <div className="user-info">
-              <div className="user-avatar">{profileData.name.charAt(0)}</div>
-              <div className="user-details">
-                <h3>Welcome, {profileData.name}!</h3>
-                <p>Premium Member</p>
-              </div>
-            </div>
-            
-            <div className="stats-container">
-              <div className="stat-card">
-                <h3>Total Orders</h3>
-                <div className="value">12</div>
-                <div className="change positive">↑ 20% from last month</div>
-              </div>
-              <div className="stat-card">
-                <h3>Average Order Value</h3>
-                <div className="value">$149.99</div>
-                <div className="change positive">↑ 8% from last month</div>
-              </div>
-              <div className="stat-card">
-                <h3>Pending Orders</h3>
-                <div className="value">2</div>
-                <div className="change negative">↓ 1 from last week</div>
-              </div>
-              <div className="stat-card">
-                <h3>Total Spent</h3>
-                <div className="value">$1,799.88</div>
-                <div className="change positive">↑ 15% from last month</div>
-              </div>
-            </div>
-            
-            <h3>Weekly Spending Overview</h3>
-            <div className="spending-chart">
-              {spendingData.map(day => (
-                <div 
-                  key={day.day}
-                  className="chart-bar"
-                  style={{
-                    height: `${(day.amount / maxAmount) * 90}%`,
-                  }}
-                >
-                  <div className="chart-bar-label">{day.day}</div>
-                </div>
-              ))}
-            </div>
-            
-            <div className="quick-actions">
-              <div className="action-button">
-                <i className="fas fa-sync-alt"></i>
-                <span>Create Return</span>
-              </div>
-              <div className="action-button">
-                <i className="fas fa-headset"></i>
-                <span>Contact Support</span>
-              </div>
-              <div className="action-button">
-                <i className="fas fa-gift"></i>
-                <span>Apply Coupon</span>
-              </div>
-              <div className="action-button">
-                <i className="fas fa-share-alt"></i>
-                <span>Refer Friends</span>
-              </div>
-            </div>
-            
-            <div className="reviews-container">
-              <h3>Recent Reviews</h3>
-              <div className="review-card">
-                <div className="review-header">
-                  <div className="review-product">Wireless Headphones</div>
-                  <div className="review-rating">
-                    <i className="fas fa-star"></i>
-                    <i className="fas fa-star"></i>
-                    <i className="fas fa-star"></i>
-                    <i className="fas fa-star"></i>
-                    <i className="fas fa-star-half-alt"></i>
-                  </div>
-                </div>
-                <div className="review-content">
-                  "Excellent sound quality and comfortable for long periods. Battery life is impressive!"
-                </div>
-              </div>
-              <div className="review-card">
-                <div className="review-header">
-                  <div className="review-product">Smart Coffee Maker</div>
-                  <div className="review-rating">
-                    <i className="fas fa-star"></i>
-                    <i className="fas fa-star"></i>
-                    <i className="fas fa-star"></i>
-                    <i className="fas fa-star"></i>
-                    <i className="far fa-star"></i>
-                  </div>
-                </div>
-                <div className="review-content">
-                  "Works perfectly with my morning routine. App could be more intuitive though."
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      };
+    // DashboardSection Component
+    const DashboardSection = ({ profileData }) => {
+      const spendingData = [
+        { day: 'Mon', amount: 120 },
+        { day: 'Tue', amount: 80 },
+        { day: 'Wed', amount: 210 },
+        { day: 'Thu', amount: 150 },
+        { day: 'Fri', amount: 180 },
+        { day: 'Sat', amount: 240 },
+        { day: 'Sun', amount: 90 }
+      ];
+      const maxAmount = Math.max(...spendingData.map(d => d.amount));
 
-      // Profile Component
-      const Profile = ({ profileData }) => (
+      return (
         <div className="section">
-          <h2><i className="fas fa-user"></i> Profile</h2>
+          <h2><i className="fas fa-tachometer-alt"></i> Dashboard</h2>
           <div className="user-info">
             <div className="user-avatar">{profileData.name.charAt(0)}</div>
             <div className="user-details">
-              <h3>{profileData.name}</h3>
-              <p>{profileData.email}</p>
+              <h3>Welcome, {profileData.name}!</h3>
+              <p>Premium Member</p>
             </div>
           </div>
-          <p><strong><i className="fas fa-envelope"></i> Email:</strong> {profileData.email}</p>
-          <p><strong><i className="fas fa-phone"></i> Phone:</strong> {profileData.phone}</p>
-          <p><strong><i className="fas fa-map-marker-alt"></i> Address:</strong> {profileData.address}</p>
+          <div className="stats-container">
+            <div className="stat-card">
+              <h3>Total Orders</h3>
+              <div className="value">12</div>
+              <div className="change positive">↑ 20% from last month</div>
+            </div>
+            <div className="stat-card">
+              <h3>Average Order Value</h3>
+              <div className="value">$149.99</div>
+              <div className="change positive">↑ 8% from last month</div>
+            </div>
+            <div className="stat-card">
+              <h3>Pending Orders</h3>
+              <div className="value">2</div>
+              <div className="change negative">↓ 1 from last week</div>
+            </div>
+            <div className="stat-card">
+              <h3>Total Spent</h3>
+              <div className="value">$1,799.88</div>
+              <div className="change positive">↑ 15% from last month</div>
+            </div>
+          </div>
+          <h3>Weekly Spending Overview</h3>
+          <div className="spending-chart">
+            {spendingData.map(day => (
+              <div
+                key={day.day}
+                className="chart-bar"
+                style={{ height: `${(day.amount / maxAmount) * 90}%` }}
+              >
+                <div className="chart-bar-label">{day.day}</div>
+              </div>
+            ))}
+          </div>
+          <div className="quick-actions">
+            <div className="action-button">
+              <i className="fas fa-sync-alt"></i>
+              <span>Create Return</span>
+            </div>
+            <div className="action-button">
+              <i className="fas fa-headset"></i>
+              <span>Contact Support</span>
+            </div>
+            <div className="action-button">
+              <i className="fas fa-gift"></i>
+              <span>Apply Coupon</span>
+            </div>
+            <div className="action-button">
+              <i className="fas fa-share-alt"></i>
+              <span>Refer Friends</span>
+            </div>
+          </div>
+          <div className="reviews-container">
+            <h3>Recent Reviews</h3>
+            <div className="review-card">
+              <div className="review-header">
+                <div className="review-product">Wireless Headphones</div>
+                <div className="review-rating">
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star-half-alt"></i>
+                </div>
+              </div>
+              <div className="review-content">
+                "Excellent sound quality and comfortable for long periods. Battery life is impressive!"
+              </div>
+            </div>
+            <div className="review-card">
+              <div className="review-header">
+                <div className="review-product">Smart Coffee Maker</div>
+                <div className="review-rating">
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="far fa-star"></i>
+                </div>
+              </div>
+              <div className="review-content">
+                "Works perfectly with my morning routine. App could be more intuitive though."
+              </div>
+            </div>
+          </div>
         </div>
       );
+    };
 
-      // Edit Profile Component
-      const EditProfile = ({ profileData, setProfileData }) => {
-        const [name, setName] = useState(profileData.name);
-        const [email, setEmail] = useState(profileData.email);
-        const [phone, setPhone] = useState(profileData.phone);
-        const [address, setAddress] = useState(profileData.address);
-
-       const handleSubmit = async (e) => {
-  e.preventDefault();
-  const updatedProfile = { name, email, phone, address };
-  try {
-    const userId = localStorage.getItem("userId");
-    const res = await fetch(`http://localhost:5000/api/user/${userId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updatedProfile),
-    });
-
-    const data = await res.json();
-    if (res.ok) {
-      setProfileData(data.user);
-      localStorage.setItem("profileData", JSON.stringify(data.user));
-      alert("✅ Profile updated successfully!");
-    } else {
-      alert("❌ Update failed: " + data.message);
-    }
-  } catch (err) {
-    console.error("Update error:", err);
-    alert("❌ Error updating profile");
-  }
-};
-
-
-        return (
-          <div className="section">
-            <h2><i className="fas fa-edit"></i> Edit Profile</h2>
-            <div>
-              <div className="form-group">
-                <label><i className="fas fa-signature"></i> Name</label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter your full name"
-                />
-              </div>
-              <div className="form-group">
-                <label><i className="fas fa-envelope"></i> Email</label>
-                <input
-                  type="email"
-                  value={email}
-                  readOnly
-                  style={{ backgroundColor: '#e5e5e5', cursor: 'not-allowed' }}
-                />
-              </div>
-              <div className="form-group">
-                <label><i className="fas fa-phone"></i> Phone</label>
-                <input
-                  type="text"
-                  value={phone}
-                  readOnly
-                   style={{ backgroundColor: '#e5e5e5', cursor: 'not-allowed' }}
-                />
-              </div>
-              <div className="form-group">
-                <label><i className="fas fa-home"></i> Address</label>
-                <input
-                  type="text"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Enter your full address"
-                />
-              </div>
-              <button
-                onClick={handleSubmit}
-                className="button button-primary"
-              >
-                <i className="fas fa-save"></i> Save Changes
-              </button>
-            </div>
+    // Profile Component
+    const Profile = ({ profileData }) => (
+      <div className="section">
+        <h2><i className="fas fa-user"></i> Profile</h2>
+        <div className="user-info">
+          <div className="user-avatar">{profileData.name.charAt(0)}</div>
+          <div className="user-details">
+            <h3>{profileData.name}</h3>
+            <p>{profileData.email}</p>
           </div>
-        );
+        </div>
+        <p><strong><i className="fas fa-envelope"></i> Email:</strong> {profileData.email}</p>
+        <p><strong><i className="fas fa-phone"></i> Phone:</strong> {profileData.phone}</p>
+        <p><strong><i className="fas fa-map-marker-alt"></i> Address:</strong> {profileData.address}</p>
+      </div>
+    );
+
+    // EditProfile Component
+    const EditProfile = ({ profileData, setProfileData }) => {
+      const [name, setName] = useState(profileData.name);
+      const [email, setEmail] = useState(profileData.email);
+      const [phone, setPhone] = useState(profileData.phone);
+      const [address, setAddress] = useState(profileData.address);
+
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        const updatedProfile = { name, email, phone, address };
+        const token = localStorage.getItem("token");
+        const userId = localStorage.getItem("userId");
+
+        if (!userId) {
+    alert("❌ User ID not found. Please log in again.");
+    return;
+  }
+  if (!token) {
+    alert("❌ No authentication token found. Please log in again.");
+    return;
+  }
+        try {
+          const res = await fetch(`http://localhost:5000/api/user/${userId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" ,
+              "Authorization": `Bearer ${token}` // Add JWT token
+            },
+            body: JSON.stringify(updatedProfile),
+          });
+          const data = await res.json();
+          console.log('Response:', data); 
+          if (res.ok) {
+            setProfileData(data.user);
+            localStorage.setItem("profileData", JSON.stringify(data.user));
+            alert("✅ Profile updated successfully!");
+          } else {
+            alert("❌ Update failed: " + data.message);
+          }
+        } catch (err) {
+          console.error("Update error:", err);
+          alert("❌ Error updating profile");
+        }
       };
 
-      // Orders Component
-      const Orders = () => {
-        const [searchTerm, setSearchTerm] = useState('');
-        const [orders, setOrders] = useState([]);
-        
-        useEffect(() => {
-          setTimeout(() => {
-            setOrders([
-              { id: '#1234', amount: 99.99, status: 'Delivered', date: '01/07/2025', category: 'Electronics', items: ['Wireless Headphones', 'USB-C Cable'] },
-              { id: '#1235', amount: 149.99, status: 'Processing', date: '03/07/2025', category: 'Clothing', items: ['Cotton T-Shirt', 'Summer Shorts'] },
-              { id: '#1236', amount: 299.99, status: 'Shipped', date: '05/07/2025', category: 'Home & Kitchen', items: ['Smart Coffee Maker', 'Electric Kettle'] },
-              { id: '#1237', amount: 89.99, status: 'Delivered', date: '02/07/2025', category: 'Books', items: ['Design Patterns', 'Clean Code'] }
-            ]);
-          }, 500);
-        }, []);
-
-        const getRecommendations = () => {
-          const categories = [...new Set(orders.map(order => order.category))];
-          const productCatalog = {
-            Electronics: ['Smartphone', 'Laptop', 'Headphones', 'Smart Watch'],
-            Clothing: ['Jacket', 'Shoes', 'T-Shirt', 'Jeans'],
-            'Home & Kitchen': ['Coffee Maker', 'Air Fryer', 'Blender', 'Cookware Set'],
-            Books: ['JavaScript Mastery', 'React Patterns', 'CSS Secrets', 'UX Design']
-          };
-          
-          let recommendations = [];
-          categories.forEach(category => {
-            if (productCatalog[category]) {
-              recommendations = [...recommendations, ...productCatalog[category].slice(0, 2)];
-            }
-          });
-          
-          if (orders.length > 0) {
-            recommendations.unshift('Premium Earbuds', 'Designer Backpack');
-          }
-          
-          return recommendations.slice(0, 4);
-        };
-
-        const filteredOrders = orders.filter(order =>
-          order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          order.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          order.category.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-
-        return (
-          <div className="section">
-            <h2><i className="fas fa-shopping-bag"></i> Orders</h2>
-            <div className="search-bar">
-              <i className="fas fa-search"></i>
+      return (
+        <div className="section">
+          <h2><i className="fas fa-edit"></i> Edit Profile</h2>
+          <div>
+            <div className="form-group">
+              <label><i className="fas fa-signature"></i> Name</label>
               <input
                 type="text"
-                placeholder="Search orders..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your full name"
               />
             </div>
-            
-            {orders.length === 0 ? (
-              <div style={{textAlign: 'center', padding: '30px'}}>
-                <i className="fas fa-spinner fa-spin" style={{fontSize: '2rem', marginBottom: '15px'}}></i>
-                <p>Loading your orders...</p>
-              </div>
-            ) : filteredOrders.length > 0 ? (
-              <ul className="orders-list">
-                {filteredOrders.map(order => (
-                  <li key={order.id}>
-                    <p><strong>Order {order.id}</strong> - ${order.amount.toFixed(2)}</p>
-                    <p>
-                      <span className={`status-badge status-${order.status.toLowerCase()}`}>
-                        {order.status}
-                      </span>
-                    </p>
-                    <p className="text-sm"><i className="far fa-calendar"></i> Placed on: {order.date}</p>
-                    <p className="text-sm"><i className="fas fa-tag"></i> Category: {order.category}</p>
-                    <p className="text-sm"><i className="fas fa-box"></i> Items: {order.items.join(', ')}</p>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div style={{textAlign: 'center', padding: '30px'}}>
-                <i className="fas fa-search" style={{fontSize: '2rem', marginBottom: '15px'}}></i>
-                <p>No orders found matching your search</p>
-              </div>
-            )}
-            
-            <div className="recommendations">
-              <h3><i className="fas fa-lightbulb"></i> Recommended For You</h3>
-              <ul>
-                {getRecommendations().map((product, index) => (
-                  <li key={index}>
-                    <i className="fas fa-star"></i> {product}
-                  </li>
-                ))}
-              </ul>
+            <div className="form-group">
+              <label><i className="fas fa-envelope"></i> Email</label>
+              <input
+                type="email"
+                value={email}
+                readOnly
+                style={{ backgroundColor: '#e5e5e5', cursor: 'not-allowed' }}
+              />
             </div>
+            <div className="form-group">
+              <label><i className="fas fa-phone"></i> Phone</label>
+              <input
+                type="text"
+                value={phone}
+                readOnly
+                style={{ backgroundColor: '#e5e5e5', cursor: 'not-allowed' }}
+              />
+            </div>
+            <div className="form-group">
+              <label><i className="fas fa-home"></i> Address</label>
+              <input
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Enter your full address"
+              />
+            </div>
+            <button
+              onClick={handleSubmit}
+              className="button button-primary"
+            >
+              <i className="fas fa-save"></i> Save Changes
+            </button>
           </div>
-        );
-      };
-
-      // Wishlist Component
-      const Wishlist = () => (
-        <div className="section">
-          <h2><i className="fas fa-heart"></i> Wishlist</h2>
-          <p>Your wishlist is currently empty.</p>
-          <button className="button button-primary" style={{marginTop: '15px'}}>
-            <i className="fas fa-shopping-cart"></i> Start Shopping
-          </button>
         </div>
       );
+    };
 
-      // Enhanced Settings Component
-      const Settings = () => {
-        const [notificationSettings, setNotificationSettings] = useState({
-          email: true,
-          sms: false,
-          push: true,
-          promotions: true
+    // Orders Component
+    const Orders = () => {
+      const [searchTerm, setSearchTerm] = useState('');
+      const [orders, setOrders] = useState([]);
+
+      useEffect(() => {
+        setTimeout(() => {
+          setOrders([
+            { id: '#1234', amount: 99.99, status: 'Delivered', date: '01/07/2025', category: 'Electronics', items: ['Wireless Headphones', 'USB-C Cable'] },
+            { id: '#1235', amount: 149.99, status: 'Processing', date: '03/07/2025', category: 'Clothing', items: ['Cotton T-Shirt', 'Summer Shorts'] },
+            { id: '#1236', amount: 299.99, status: 'Shipped', date: '05/07/2025', category: 'Home & Kitchen', items: ['Smart Coffee Maker', 'Electric Kettle'] },
+            { id: '#1237', amount: 89.99, status: 'Delivered', date: '02/07/2025', category: 'Books', items: ['Design Patterns', 'Clean Code'] }
+          ]);
+        }, 500);
+      }, []);
+
+      const getRecommendations = () => {
+        const categories = [...new Set(orders.map(order => order.category))];
+        const productCatalog = {
+          Electronics: ['Smartphone', 'Laptop', 'Headphones', 'Smart Watch'],
+          Clothing: ['Jacket', 'Shoes', 'T-Shirt', 'Jeans'],
+          'Home & Kitchen': ['Coffee Maker', 'Air Fryer', 'Blender', 'Cookware Set'],
+          Books: ['JavaScript Mastery', 'React Patterns', 'CSS Secrets', 'UX Design']
+        };
+        let recommendations = [];
+        categories.forEach(category => {
+          if (productCatalog[category]) {
+            recommendations = [...recommendations, ...productCatalog[category].slice(0, 2)];
+          }
         });
-        
-        const [darkMode, setDarkMode] = useState(false);
-        
-        const handleToggle = (setting) => {
-          setNotificationSettings(prev => ({
-            ...prev,
-            [setting]: !prev[setting]
-          }));
-        };
-        
-        const toggleDarkMode = () => {
-          const newDarkMode = !darkMode;
-          setDarkMode(newDarkMode);
-          if (newDarkMode) {
-            document.body.classList.add('dark-mode');
-          } else {
-            document.body.classList.remove('dark-mode');
-          }
-          localStorage.setItem('darkMode', newDarkMode);
-        };
-        
-        // Check for saved dark mode preference on load
-        useEffect(() => {
-          const savedDarkMode = localStorage.getItem('darkMode') === 'true';
-          if (savedDarkMode) {
-            setDarkMode(savedDarkMode);
-            document.body.classList.add('dark-mode');
-          }
-        }, []);
-        
-        return (
-          <div className="section">
-            <h2><i className="fas fa-cog"></i> Settings</h2>
-            
-            <h3>Notification Preferences</h3>
-            <div>
-              <div className="setting-option">
-                <div className="setting-info">
-                  <h3>Email Notifications</h3>
-                  <p>Order updates, promotions, and account alerts</p>
-                </div>
-                <label className="toggle-switch">
-                  <input 
-                    type="checkbox" 
-                    checked={notificationSettings.email}
-                    onChange={() => handleToggle('email')}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-              </div>
-              
-              <div className="setting-option">
-                <div className="setting-info">
-                  <h3>SMS Alerts</h3>
-                  <p>Order shipping notifications and security alerts</p>
-                </div>
-                <label className="toggle-switch">
-                  <input 
-                    type="checkbox" 
-                    checked={notificationSettings.sms}
-                    onChange={() => handleToggle('sms')}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-              </div>
-              
-              <div className="setting-option">
-                <div className="setting-info">
-                  <h3>Push Notifications</h3>
-                  <p>App notifications for deals and new features</p>
-                </div>
-                <label className="toggle-switch">
-                  <input 
-                    type="checkbox" 
-                    checked={notificationSettings.push}
-                    onChange={() => handleToggle('push')}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-              </div>
-              
-              <div className="setting-option">
-                <div className="setting-info">
-                  <h3>Promotional Offers</h3>
-                  <p>Special deals, discounts, and exclusive offers</p>
-                </div>
-                <label className="toggle-switch">
-                  <input 
-                    type="checkbox" 
-                    checked={notificationSettings.promotions}
-                    onChange={() => handleToggle('promotions')}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-              </div>
+        if (orders.length > 0) {
+          recommendations.unshift('Premium Earbuds', 'Designer Backpack');
+        }
+        return recommendations.slice(0, 4);
+      };
+
+      const filteredOrders = orders.filter(order =>
+        order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.category.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+
+      return (
+        <div className="section">
+          <h2><i className="fas fa-shopping-bag"></i> Orders</h2>
+          <div className="search-bar">
+            <i className="fas fa-search"></i>
+            <input
+              type="text"
+              placeholder="Search orders..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          {orders.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '30px' }}>
+              <i className="fas fa-spinner fa-spin" style={{ fontSize: '2rem', marginBottom: '15px' }}></i>
+              <p>Loading your orders...</p>
             </div>
-            
-            <h3>Appearance</h3>
+          ) : filteredOrders.length > 0 ? (
+            <ul className="orders-list">
+              {filteredOrders.map(order => (
+                <li key={order.id}>
+                  <p><strong>Order {order.id}</strong> - ${order.amount.toFixed(2)}</p>
+                  <p>
+                    <span className={`status-badge status-${order.status.toLowerCase()}`}>
+                      {order.status}
+                    </span>
+                  </p>
+                  <p className="text-sm"><i className="far fa-calendar"></i> Placed on: {order.date}</p>
+                  <p className="text-sm"><i className="fas fa-tag"></i> Category: {order.category}</p>
+                  <p className="text-sm"><i className="fas fa-box"></i> Items: {order.items.join(', ')}</p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div style={{ textAlign: 'center', padding: '30px' }}>
+              <i className="fas fa-search" style={{ fontSize: '2rem', marginBottom: '15px' }}></i>
+              <p>No orders found matching your search</p>
+            </div>
+          )}
+          <div className="recommendations">
+            <h3><i className="fas fa-lightbulb"></i> Recommended For You</h3>
+            <ul>
+              {getRecommendations().map((product, index) => (
+                <li key={index}>
+                  <i className="fas fa-star"></i> {product}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      );
+    };
+
+    // Wishlist Component
+    const Wishlist = () => (
+      <div className="section">
+        <h2><i className="fas fa-heart"></i> Wishlist</h2>
+        <p>Your wishlist is currently empty.</p>
+        <button className="button button-primary" style={{ marginTop: '15px' }}>
+          <i className="fas fa-shopping-cart"></i> Start Shopping
+        </button>
+      </div>
+    );
+
+    // Settings Component
+    const Settings = () => {
+      const [notificationSettings, setNotificationSettings] = useState({
+        email: true,
+        sms: false,
+        push: true,
+        promotions: true
+      });
+      const [darkMode, setDarkMode] = useState(false);
+
+      const handleToggle = (setting) => {
+        setNotificationSettings(prev => ({
+          ...prev,
+          [setting]: !prev[setting]
+        }));
+      };
+
+      const toggleDarkMode = () => {
+        const newDarkMode = !darkMode;
+        setDarkMode(newDarkMode);
+        if (newDarkMode) {
+          document.body.classList.add('dark-mode');
+        } else {
+          document.body.classList.remove('dark-mode');
+        }
+        localStorage.setItem('darkMode', newDarkMode);
+      };
+
+      useEffect(() => {
+        const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+        if (savedDarkMode) {
+          setDarkMode(savedDarkMode);
+          document.body.classList.add('dark-mode');
+        }
+      }, []);
+
+      return (
+        <div className="section">
+          <h2><i className="fas fa-cog"></i> Settings</h2>
+          <h3>Notification Preferences</h3>
+          <div>
             <div className="setting-option">
               <div className="setting-info">
-                <h3>Dark Mode</h3>
-                <p>Switch to dark color scheme</p>
+                <h3>Email Notifications</h3>
+                <p>Order updates, promotions, and account alerts</p>
               </div>
               <label className="toggle-switch">
-                <input 
-                  type="checkbox" 
-                  checked={darkMode}
-                  onChange={toggleDarkMode}
+                <input
+                  type="checkbox"
+                  checked={notificationSettings.email}
+                  onChange={() => handleToggle('email')}
                 />
                 <span className="toggle-slider"></span>
               </label>
             </div>
-            <div className="dark-mode-preview">
-              <i className="fas fa-moon"></i>
-              <p>Preview of dark mode theme</p>
+            <div className="setting-option">
+              <div className="setting-info">
+                <h3>SMS Alerts</h3>
+                <p>Order shipping notifications and security alerts</p>
+              </div>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={notificationSettings.sms}
+                  onChange={() => handleToggle('sms')}
+                />
+                <span className="toggle-slider"></span>
+              </label>
             </div>
-            
-            <h3>Account Security</h3>
-            <div className="security-actions">
-              <button className="security-button">
-                <i className="fas fa-lock"></i> Change Password
-              </button>
-              <button className="security-button">
-                <i className="fas fa-shield-alt"></i> Two-Factor Authentication
-              </button>
-              <button className="security-button">
-                <i className="fas fa-list"></i> Login Activity
-              </button>
-              <button className="security-button">
-                <i className="fas fa-user-shield"></i> Privacy Settings
-              </button>
+            <div className="setting-option">
+              <div className="setting-info">
+                <h3>Push Notifications</h3>
+                <p>App notifications for deals and new features</p>
+              </div>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={notificationSettings.push}
+                  onChange={() => handleToggle('push')}
+                />
+                <span className="toggle-slider"></span>
+              </label>
             </div>
-            
-            <h3>Payment Methods</h3>
-            <div className="security-actions">
-              <button className="security-button">
-                <i className="fas fa-credit-card"></i> Add Payment Method
-              </button>
-              <button className="security-button">
-                <i className="fas fa-money-bill-wave"></i> Manage Subscriptions
-              </button>
+            <div className="setting-option">
+              <div className="setting-info">
+                <h3>Promotional Offers</h3>
+                <p>Special deals, discounts, and exclusive offers</p>
+              </div>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={notificationSettings.promotions}
+                  onChange={() => handleToggle('promotions')}
+                />
+                <span className="toggle-slider"></span>
+              </label>
             </div>
           </div>
-        );
-      };
+          <h3>Appearance</h3>
+          <div className="setting-option">
+            <div className="setting-info">
+              <h3>Dark Mode</h3>
+              <p>Switch to dark color scheme</p>
+            </div>
+            <label className="toggle-switch">
+              <input
+                type="checkbox"
+                checked={darkMode}
+                onChange={toggleDarkMode}
+              />
+              <span className="toggle-slider"></span>
+            </label>
+          </div>
+          <div className="dark-mode-preview">
+            <i className="fas fa-moon"></i>
+            <p>Preview of dark mode theme</p>
+          </div>
+          <h3>Account Security</h3>
+          <div className="security-actions">
+            <button className="security-button">
+              <i className="fas fa-lock"></i> Change Password
+            </button>
+            <button className="security-button">
+              <i className="fas fa-shield-alt"></i> Two-Factor Authentication
+            </button>
+            <button className="security-button">
+              <i className="fas fa-list"></i> Login Activity
+            </button>
+            <button className="security-button">
+              <i className="fas fa-user-shield"></i> Privacy Settings
+            </button>
+          </div>
+          <h3>Payment Methods</h3>
+          <div className="security-actions">
+            <button className="security-button">
+              <i className="fas fa-credit-card"></i> Add Payment Method
+            </button>
+            <button className="security-button">
+              <i className="fas fa-money-bill-wave"></i> Manage Subscriptions
+            </button>
+          </div>
+        </div>
+      );
+    };
 
-      // Logout Component
-      const Logout = () => (
-  <div className="section">
-    <h2><i className="fas fa-sign-out-alt"></i> Logout</h2>
-    <p>Are you sure you want to logout from your account?</p>
-    <button
-      onClick={() => {
-        const confirmed = window.confirm("Are you sure you want to logout?");
-        if (confirmed) {
-          localStorage.removeItem('profileData');
-          localStorage.removeItem('userId');
-          localStorage.removeItem('token'); // if you're using JWT
-          alert('✅ Logged out successfully!');
-          window.location.href = "signin.html";
-        }
-        // else: do nothing
-      }}
-      className="button button-danger"
-    >
-      <i className="fas fa-sign-out-alt"></i> Confirm Logout
-    </button>
-  </div>
-);
-
-
-      // Main Dashboard Component
-      const Dashboard = () => {
-        const [activeSection, setActiveSection] = useState('dashboard');
-        const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-        const [profileData, setProfileData] = useState(() => {
-          try {
-            const savedData = localStorage.getItem('profileData');
-            return savedData ? JSON.parse(savedData) : {
-              name: 'Alex Morgan',
-              email: 'alex.morgan@example.com',
-              phone: '+1 (555) 123-4567',
-              address: '456 Commerce Street, San Francisco, CA 94103',
-            };
-          } catch (error) {
-            console.error("Error parsing profile data from local storage:", error);
-            return {
-              name: 'Alex Morgan',
-              email: 'alex.morgan@example.com',
-              phone: '+1 (555) 123-4567',
-              address: '456 Commerce Street, San Francisco, CA 94103',
-            };
-          }
-        });
-
-        useEffect(() => {
-          const handleClickOutside = (e) => {
-            if (window.innerWidth <= 768 && 
-                isSidebarOpen && 
-                !e.target.closest('.sidebar') && 
-                !e.target.closest('.menu-button')) {
-              setIsSidebarOpen(false);
+    // Logout Component
+    const Logout = () => (
+      <div className="section">
+        <h2><i className="fas fa-sign-out-alt"></i> Logout</h2>
+        <p>Are you sure you want to logout from your account?</p>
+        <button
+          onClick={() => {
+            const confirmed = window.confirm("Are you sure you want to logout?");
+            if (confirmed) {
+              localStorage.removeItem('profileData');
+              localStorage.removeItem('userId');
+              localStorage.removeItem('token');
+              alert('✅ Logged out successfully!');
+              window.location.href = "signin.html";
             }
+          }}
+          className="button button-danger"
+        >
+          <i className="fas fa-sign-out-alt"></i> Confirm Logout
+        </button>
+      </div>
+    );
+
+    // Main Dashboard Component
+    const Dashboard = () => {
+      const [activeSection, setActiveSection] = useState('dashboard');
+      const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+      const [profileData, setProfileData] = useState(() => {
+        try {
+          const savedData = localStorage.getItem('profileData');
+          return savedData ? JSON.parse(savedData) : {
+            name: 'Alex Morgan',
+            email: 'alex.morgan@example.com',
+            phone: '+1 (555) 123-4567',
+            address: '456 Commerce Street, San Francisco, CA 94103',
           };
-
-          document.addEventListener('click', handleClickOutside);
-          return () => document.removeEventListener('click', handleClickOutside);
-        }, [isSidebarOpen]);
-
-         useEffect(() => {
-    const fetchUserData = async () => {
-      const userId = localStorage.getItem('userId');
-      if (!userId) return;
-
-      try {
-        const res = await fetch(`http://localhost:5000/api/user/${userId}`);
-        if (res.ok) {
-          const data = await res.json();
-          setProfileData(data); // 🔁 Update the UI
-          localStorage.setItem("profileData", JSON.stringify(data)); // 🔁 Sync localStorage
-        } else {
-          console.error("❌ Failed to fetch user profile");
+        } catch (error) {
+          console.error("Error parsing profile data from local storage:", error);
+          return {
+            name: 'Alex Morgan',
+            email: 'alex.morgan@example.com',
+            phone: '+1 (555) 123-4567',
+            address: '456 Commerce Street, San Francisco, CA 94103',
+          };
         }
-      } catch (err) {
-        console.error("❌ Error fetching user data:", err);
+      });
+
+      useEffect(() => {
+        const handleClickOutside = (e) => {
+          if (window.innerWidth <= 768 && 
+              isSidebarOpen && 
+              !e.target.closest('.sidebar') && 
+              !e.target.closest('.menu-button')) {
+            setIsSidebarOpen(false);
+          }
+        };
+
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+      }, [isSidebarOpen]);
+
+      // Fetch user data from query params or API on mount
+     useEffect(() => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const userId = urlParams.get('userId');
+  const userName = urlParams.get('userName');
+  const userEmail = urlParams.get('userEmail');
+  const token = urlParams.get('token');
+
+  const fetchUpdatedProfile = async () => {
+      const storedUserId = localStorage.getItem('userId');
+      const token1 = localStorage.getItem('token');
+      if (storedUserId && token1) {
+        try {
+          console.log('Fetching updated profile with userId:', userId);
+          const res = await fetch(`http://localhost:5000/api/user/${storedUserId}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          });
+          const data = await res.json();
+          console.log('Fetched data:', data);
+          if (res.ok && data) {
+            setProfileData(data);
+            localStorage.setItem('profileData', JSON.stringify(data));
+          } else {
+            console.error('Failed to fetch updated profile:', data.message);
+          }
+        } catch (err) {
+          console.error('Error fetching updated profile:', err);
+        }
       }
     };
 
-    fetchUserData();
-  }, []);
+  if (userName && userEmail && token && userId) {
+    const newProfileData = {
+      name: decodeURIComponent(userName),
+      email: decodeURIComponent(userEmail),
+      phone: localStorage.getItem('profileData')?.phone || '+1 (555) 123-4567',
+      address: localStorage.getItem('profileData')?.address || '456 Commerce Street, San Francisco, CA 94103',
+    };
+    setProfileData(newProfileData);
+    localStorage.setItem('profileData', JSON.stringify(newProfileData));
+    localStorage.setItem('userId', userId);
+    localStorage.setItem('token', token); // Save token here
+  // } else if (token && userId) {
+  //   fetchUserDataFromToken(token, userId);
+  } else {
+    // const storedUserId = localStorage.getItem('userId');
+    // if (storedUserId) {
+    //   fetch(`http://localhost:5000/api/user/${storedUserId}`)
+    //     .then(res => res.json())
+    //     .then(data => {
+    //       if (data) {
+    //         setProfileData(data);
+    //         localStorage.setItem('profileData', JSON.stringify(data));
+    //       }
+    //     })
+    //     .catch(err => console.error('Error fetching stored user data:', err));
+    // }
+    fetchUpdatedProfile();
+  }
+}, []);
 
-        return (
-          <div className="container">
-            <header className="header">
-              <button 
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
-                className="menu-button"
-                aria-label="Toggle menu"
-              >
-                <i className={isSidebarOpen ? "fas fa-times" : "fas fa-bars"}></i>
-              </button>
-              <h1>Arc E-Commerce Dashboard</h1>
-              <div className="header-controls">
-                <button className="menu-button" aria-label="Notifications">
-                  <i className="fas fa-bell"></i>
-                </button>
-                <button
-                  onClick={() => setActiveSection('settings')}
-                  className="menu-button"
-                  aria-label="Settings"
-                >
-                  <i className="fas fa-cog"></i>
-                </button>
-              </div>
-            </header>
-            
-            {isSidebarOpen && window.innerWidth <= 768 && (
-              <div className="overlay active"></div>
-            )}
-            
-            <div className="dashboard">
-              <nav className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
-                <div className="user-info">
-                  <div className="user-avatar">{profileData.name.charAt(0)}</div>
-                  <div className="user-details">
-                    <h3>{profileData.name}</h3>
-                    <p>Premium Member</p>
-                  </div>
-                </div>
-                <ul>
-                  <li>
-                    <button
-                      onClick={() => setActiveSection('dashboard')}
-                      className={activeSection === 'dashboard' ? 'active' : ''}
-                    >
-                      <i className="fas fa-tachometer-alt"></i> Dashboard
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      onClick={() => setActiveSection('profile')}
-                      className={activeSection === 'profile' ? 'active' : ''}
-                    >
-                      <i className="fas fa-user"></i> Profile
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      onClick={() => setActiveSection('edit')}
-                      className={activeSection === 'edit' ? 'active' : ''}
-                    >
-                      <i className="fas fa-edit"></i> Edit Profile
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      onClick={() => setActiveSection('orders')}
-                      className={activeSection === 'orders' ? 'active' : ''}
-                    >
-                      <i className="fas fa-shopping-bag"></i> Orders
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      onClick={() => setActiveSection('wishlist')}
-                      className={activeSection === 'wishlist' ? 'active' : ''}
-                    >
-                      <i className="fas fa-heart"></i> Wishlist
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      onClick={() => setActiveSection('settings')}
-                      className={activeSection === 'settings' ? 'active' : ''}
-                    >
-                      <i className="fas fa-cog"></i> Settings
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      onClick={() => setActiveSection('logout')}
-                      className={`sidebar-logout ${activeSection === 'logout' ? 'active' : ''}`}
-                    >
-                      <i className="fas fa-sign-out-alt"></i> Logout
-                    </button>
-                  </li>
-                </ul>
-              </nav>
-              <main className={`main ${!isSidebarOpen ? 'centered' : ''}`}>
-                {activeSection === 'dashboard' && <DashboardSection profileData={profileData} />}
-                {activeSection === 'profile' && <Profile profileData={profileData} />}
-                {activeSection === 'edit' && <EditProfile profileData={profileData} setProfileData={setProfileData} />}
-                {activeSection === 'orders' && <Orders />}
-                {activeSection === 'wishlist' && <Wishlist />}
-                {activeSection === 'settings' && <Settings />}
-                {activeSection === 'logout' && <Logout />}
-              </main>
-            </div>
-          </div>
-        );
+      const fetchUserDataFromToken = async (token, userId) => {
+        try {
+          const res = await fetch(`http://localhost:5000/api/user/${userId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setProfileData(data);
+            localStorage.setItem('profileData', JSON.stringify(data));
+            localStorage.setItem('userId', userId);
+            localStorage.setItem('token', token);
+          } else {
+            console.error('❌ Failed to fetch user profile with token');
+          }
+        } catch (err) {
+          console.error('❌ Error fetching user data with token:', err);
+        }
       };
 
-      try {
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<Dashboard />);
-      } catch (error) {
-        console.error("Error rendering React app:", error);
-        document.getElementById('root').innerText = "Error: Failed to render dashboard. Check console for details.";
-      }
+      return (
+        <div className="container">
+          <header className="header">
+            <button 
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
+              className="menu-button"
+              aria-label="Toggle menu"
+            >
+              <i className={isSidebarOpen ? "fas fa-times" : "fas fa-bars"}></i>
+            </button>
+            <h1>Arc E-Commerce Dashboard</h1>
+            <div className="header-controls">
+              <button className="menu-button" aria-label="Notifications">
+                <i className="fas fa-bell"></i>
+              </button>
+              <button
+                onClick={() => setActiveSection('settings')}
+                className="menu-button"
+                aria-label="Settings"
+              >
+                <i className="fas fa-cog"></i>
+              </button>
+            </div>
+          </header>
+          {isSidebarOpen && window.innerWidth <= 768 && (
+            <div className="overlay active"></div>
+          )}
+          <div className="dashboard">
+            <nav className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
+              <div className="user-info">
+                <div className="user-avatar">{profileData.name.charAt(0)}</div>
+                <div className="user-details">
+                  <h3>{profileData.name}</h3>
+                  <p>Premium Member</p>
+                </div>
+              </div>
+              <ul>
+                <li>
+                  <button
+                    onClick={() => setActiveSection('dashboard')}
+                    className={activeSection === 'dashboard' ? 'active' : ''}
+                  >
+                    <i className="fas fa-tachometer-alt"></i> Dashboard
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => setActiveSection('profile')}
+                    className={activeSection === 'profile' ? 'active' : ''}
+                  >
+                    <i className="fas fa-user"></i> Profile
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => setActiveSection('edit')}
+                    className={activeSection === 'edit' ? 'active' : ''}
+                  >
+                    <i className="fas fa-edit"></i> Edit Profile
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => setActiveSection('orders')}
+                    className={activeSection === 'orders' ? 'active' : ''}
+                  >
+                    <i className="fas fa-shopping-bag"></i> Orders
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => setActiveSection('wishlist')}
+                    className={activeSection === 'wishlist' ? 'active' : ''}
+                  >
+                    <i className="fas fa-heart"></i> Wishlist
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => setActiveSection('settings')}
+                    className={activeSection === 'settings' ? 'active' : ''}
+                  >
+                    <i className="fas fa-cog"></i> Settings
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => setActiveSection('logout')}
+                    className={`sidebar-logout ${activeSection === 'logout' ? 'active' : ''}`}
+                  >
+                    <i className="fas fa-sign-out-alt"></i> Logout
+                  </button>
+                </li>
+              </ul>
+            </nav>
+            <main className={`main ${!isSidebarOpen ? 'centered' : ''}`}>
+              {activeSection === 'dashboard' && <DashboardSection profileData={profileData} />}
+              {activeSection === 'profile' && <Profile profileData={profileData} />}
+              {activeSection === 'edit' && <EditProfile profileData={profileData} setProfileData={setProfileData} />}
+              {activeSection === 'orders' && <Orders />}
+              {activeSection === 'wishlist' && <Wishlist />}
+              {activeSection === 'settings' && <Settings />}
+              {activeSection === 'logout' && <Logout />}
+            </main>
+          </div>
+        </div>
+      );
+    };
+
+    try {
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<Dashboard />);
+    } catch (error) {
+      console.error("Error rendering React app:", error);
+      document.getElementById('root').innerText = "Error: Failed to render dashboard. Check console for details.";
     }
-  </script>
+  }
+</script>
 </body>
 </html>

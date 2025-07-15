@@ -277,7 +277,7 @@ router.post('/signin', async (req, res) => {
     if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
 
     // ✅ Add JWT or session logic here
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     res.status(200).json({
       message: "Login successful",
@@ -301,6 +301,9 @@ router.post('/signin', async (req, res) => {
 // ✅ GET user by ID
 router.get('/user/:id', authenticateToken, async (req, res) => {
     try {
+      if (req.user.id !== req.params.id) {
+      return res.status(403).json({ message: 'Forbidden: Access to other users is not allowed' });
+    }
       const user = await User.findById(req.params.id);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
@@ -328,11 +331,15 @@ router.put('/user/:id', authenticateToken, async (req, res) => {
   const { name, email, phone, address } = req.body;
 
   try {
-    const updatedUser = await User.findByIdAndUpdate(
-      req.params.id,
-      { name, email, phone, address },
-      { new: true }
-    );
+    if (req.user.id !== req.params.id) {
+      return res.status(403).json({ message: 'Forbidden: Cannot update another user' });
+    }
+    // const updatedUser = await User.findByIdAndUpdate(
+    //   req.params.id,
+    //   { name, email, phone, address },
+    //   { new: true }
+    // );
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
 
     if (!updatedUser) return res.status(404).json({ message: "User not found" });
 

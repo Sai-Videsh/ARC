@@ -37,9 +37,12 @@ async (accessToken, refreshToken, profile, done) => {
         isVerified: true, // ✅ Skip OTP since it's verified by Google
       });
       await user.save();
+      console.log('New user created:', user); // Add this to debug
+    } else{
+      console.log('Existing user found:', user); // Add this to debug
+      return done(null, user);
     }
 
-    return done(null, user);
   } catch (err) {
     return done(err, null);
   }

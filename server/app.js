@@ -1,4 +1,5 @@
 require('dotenv').config();
+const jwt = require('jsonwebtoken');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -50,8 +51,8 @@ app.get('/auth/google',
 app.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/signin.html' }),
   (req, res) => {
-    res.redirect(`/dashboard1.html?userId=${req.user._id}&userEmail=${encodeURIComponent(req.user.email)}&userName=${encodeURIComponent(req.user.name)}`); // ✅ Success redirect with user data
-  }
+    const token = jwt.sign({ id: req.user._id, email: req.user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+res.redirect(`/dashboard1.html?token=${token}&userId=${req.user._id}&userEmail=${encodeURIComponent(req.user.email)}&userName=${encodeURIComponent(req.user.name)}`);  }
 );
 
 // ✅ Facebook OAuth Routes (NEW)
