@@ -6,6 +6,8 @@ const bcrypt = require('bcryptjs'); // or require('bcrypt');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const ipRequests = new Map();
+const jwt = require('jsonwebtoken');
+
 
 // ✅ Email setup (move to .env in production)
 const transporter = nodemailer.createTransport({
@@ -255,47 +257,49 @@ router.post('/reset-password', async (req, res) => {
   res.json({ message: "Password reset successful" });
 });
 
+const authenticateToken = require('../middleware/authMiddleware'); // path depends on where you place it
+
+router.get('/profile', authenticateToken, async (req, res) => {
+  const user = await User.findById(req.user.id);
+  res.json({ name: user.name, email: user.email });
+});
+
+
 // ✅ Signin route (Fix completed)
 router.post('/signin', async (req, res) => {
-  const { email, password } = req.body;
-
   try {
-    // 1. Check if user exists
+    const { email, password } = req.body;
+
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ msg: '❌ Email is not signed up' });
-    }
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    // 2. Verify password
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ msg: '❌ Password is incorrect' });
-    }
-    if (!user.isVerified) {
-    return res.status(403).json({ message: 'Please verify your email first' });
-    }
+    if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
 
+    // ✅ Add JWT or session logic here
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
 
-    // 3. Send success response
-    return res.status(200).json({
-      msg: '✅ Login successful!',
+    res.status(200).json({
+      message: "Login successful",
+      token,
       user: {
         id: user._id,
         name: user.name,
-        phone: user.phone,
         email: user.email,
-        address: user.address,
+        phone: user.phone,
+        address: user.address
       }
     });
 
-  } catch (error) {
-    console.error('Signin error:', error);
-    res.status(500).json({ msg: 'Server error', error: error.message });
+  } catch (err) {
+    console.error("🚨 Signin error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
+
 // ✅ GET user by ID
-router.get('/user/:id', async (req, res) => {
+router.get('/user/:id', authenticateToken, async (req, res) => {
     try {
       const user = await User.findById(req.params.id);
       if (!user) {
@@ -319,13 +323,34 @@ router.get('/user/:id', async (req, res) => {
     }
   });
 
-  // ✅ Protected route example
-router.get('/profile', (req, res) => {
-  if (!req.user) {
-    return res.status(401).json({ message: 'Not authenticated' });
+  // ✅ PUT: Update user by ID
+router.put('/user/:id', authenticateToken, async (req, res) => {
+  const { name, email, phone, address } = req.body;
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      { name, email, phone, address },
+      { new: true }
+    );
+
+    if (!updatedUser) return res.status(404).json({ message: "User not found" });
+
+    res.status(200).json({ message: "Profile updated", user: updatedUser });
+  } catch (error) {
+    console.error("Update error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
-  res.status(200).json({ user: req.user });
 });
+
+
+  // ✅ Protected route example
+// router.get('/profile', (req, res) => {
+//   if (!req.user) {
+//     return res.status(401).json({ message: 'Not authenticated' });
+//   }
+//   res.status(200).json({ user: req.user });
+// });
 
   
 

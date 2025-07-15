@@ -148,6 +148,12 @@
       display: flex;
       gap: 28px;
     }
+    .forgot-section {
+  display: none;
+  width: 100%;
+  height: auto;
+  opacity: 1;
+}
     
     .nav-links a {
       text-decoration: none;
@@ -278,7 +284,7 @@
       max-width: 480px;
       background: var(--light-card-bg);
       border-radius: 20px;
-      overflow: hidden;
+      /* overflow: hidden; */
       box-shadow: 
         0 10px 30px var(--light-shadow),
         0 0 0 1px rgba(0,0,0,0.03);
@@ -560,6 +566,9 @@
       transform-origin: right;
       transition: transform 0.3s;
     }
+.forgot-section.active {
+  display: block;
+}
     
     .dark-theme .form-footer a::after {
       background: var(--dark-accent);
@@ -870,6 +879,10 @@
   animation: spin 1s linear infinite;
 }
 
+#forgotStep1, #forgotStep2, #forgotStep3 {
+  display: none;
+}
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
@@ -927,7 +940,7 @@
           <button id="verifyHumanBtn" class="submit-btn">Verify Me</button>
         </div>
       </div>
-    <div class="container" id="signinForm" style="display: none;">
+    <div class="container" id="signinContainer" style="display: none;">
       
       <div class="design-strip"></div>
       <div class="form-container">
@@ -951,13 +964,13 @@
           
           <div class="form-group">
             <label for="password">Password</label>
-            <div class="input-with-icon">
-              <i class="fas fa-lock"></i>
-              <input type="password" id="password" name="password" placeholder="••••••••" required>
-              <button type="button" class="password-toggle">
-                <i class="fas fa-eye"></i>
-              </button>
-            </div>
+            <div style="position: relative; display: inline-block; width: 100%;" class="input-with-icon">
+    <i class="fas fa-lock" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #888; pointer-events: none;"></i>
+    <input type="password" id="password" placeholder="Password" required style="width: 100%; padding-left: 35px; padding-right: 35px; box-sizing: border-box;">
+    <button type="button" class="password-toggle" data-target="password" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none; cursor: pointer;">
+      <i class="fas fa-eye"></i>
+    </button>
+  </div>
           </div>
           
           <div class="form-footer">

@@ -808,6 +808,16 @@
 <body>
   <div id="root">Loading...</div>
   <script type="text/babel">
+    function handleLogout() {
+  const confirmed = confirm("Are you sure you want to logout?");
+  if (confirmed) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("profileData");
+    window.location.href = "signin.html";
+  }
+}
+
     if (!window.React || !window.ReactDOM) {
       console.error("React or ReactDOM failed to load. Check CDN links or network.");
       document.getElementById('root').innerText = "Error: Failed to load React. Check console for details.";
@@ -959,13 +969,31 @@
         const [phone, setPhone] = useState(profileData.phone);
         const [address, setAddress] = useState(profileData.address);
 
-        const handleSubmit = (e) => {
-          e.preventDefault();
-          const updatedProfile = { name, email, phone, address };
-          setProfileData(updatedProfile);
-          localStorage.setItem('profileData', JSON.stringify(updatedProfile));
-          alert('Profile updated successfully!');
-        };
+       const handleSubmit = async (e) => {
+  e.preventDefault();
+  const updatedProfile = { name, email, phone, address };
+  try {
+    const userId = localStorage.getItem("userId");
+    const res = await fetch(`http://localhost:5000/api/user/${userId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedProfile),
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      setProfileData(data.user);
+      localStorage.setItem("profileData", JSON.stringify(data.user));
+      alert("✅ Profile updated successfully!");
+    } else {
+      alert("❌ Update failed: " + data.message);
+    }
+  } catch (err) {
+    console.error("Update error:", err);
+    alert("❌ Error updating profile");
+  }
+};
+
 
         return (
           <div className="section">
@@ -985,8 +1013,8 @@
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email address"
+                  readOnly
+                  style={{ backgroundColor: '#e5e5e5', cursor: 'not-allowed' }}
                 />
               </div>
               <div className="form-group">
@@ -994,8 +1022,8 @@
                 <input
                   type="text"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="Enter your phone number"
+                  readOnly
+                   style={{ backgroundColor: '#e5e5e5', cursor: 'not-allowed' }}
                 />
               </div>
               <div className="form-group">
@@ -1285,20 +1313,28 @@
 
       // Logout Component
       const Logout = () => (
-        <div className="section">
-          <h2><i className="fas fa-sign-out-alt"></i> Logout</h2>
-          <p>Are you sure you want to logout from your account?</p>
-          <button
-            onClick={() => {
-              localStorage.removeItem('profileData');
-              alert('Logged out successfully!');
-            }}
-            className="button button-danger"
-          >
-            <i className="fas fa-sign-out-alt"></i> Confirm Logout
-          </button>
-        </div>
-      );
+  <div className="section">
+    <h2><i className="fas fa-sign-out-alt"></i> Logout</h2>
+    <p>Are you sure you want to logout from your account?</p>
+    <button
+      onClick={() => {
+        const confirmed = window.confirm("Are you sure you want to logout?");
+        if (confirmed) {
+          localStorage.removeItem('profileData');
+          localStorage.removeItem('userId');
+          localStorage.removeItem('token'); // if you're using JWT
+          alert('✅ Logged out successfully!');
+          window.location.href = "signin.html";
+        }
+        // else: do nothing
+      }}
+      className="button button-danger"
+    >
+      <i className="fas fa-sign-out-alt"></i> Confirm Logout
+    </button>
+  </div>
+);
+
 
       // Main Dashboard Component
       const Dashboard = () => {
@@ -1337,6 +1373,28 @@
           document.addEventListener('click', handleClickOutside);
           return () => document.removeEventListener('click', handleClickOutside);
         }, [isSidebarOpen]);
+
+         useEffect(() => {
+    const fetchUserData = async () => {
+      const userId = localStorage.getItem('userId');
+      if (!userId) return;
+
+      try {
+        const res = await fetch(`http://localhost:5000/api/user/${userId}`);
+        if (res.ok) {
+          const data = await res.json();
+          setProfileData(data); // 🔁 Update the UI
+          localStorage.setItem("profileData", JSON.stringify(data)); // 🔁 Sync localStorage
+        } else {
+          console.error("❌ Failed to fetch user profile");
+        }
+      } catch (err) {
+        console.error("❌ Error fetching user data:", err);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
         return (
           <div className="container">

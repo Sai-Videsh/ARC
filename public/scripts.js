@@ -214,9 +214,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const signupForm = document.getElementById("signupForm");
   const signinForm = document.getElementById("signinForm");
+  const signinContainer = document.getElementById("signinContainer");
    const verifyBtn = document.getElementById("verifyHumanBtn");
   const verifyMessage = document.getElementById("verify-message");
-  // const signinForm = document.getElementById("signinForm");
   const verifyHuman = document.getElementById("verifyHuman");
   const loadingOverlay = document.getElementById("loadingOverlay");
   let pageLoadTime = Date.now();
@@ -242,7 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
       verifyBtn.classList.add("loading");
       loadingOverlay?.classList.add("active");
       verifyHuman.style.display = "block"; // ✅ Ensure visible during verification
-      signinForm.style.display = "none"; // ✅ Ensure hidden during verification
+      signinContainer.style.display = "none"; // ✅ Ensure hidden during verification
 
 
       try {
@@ -261,7 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
           console.log("Delaying redirect for:", randomDelay, "ms");
           await new Promise(resolve => setTimeout(resolve, randomDelay))
           verifyHuman.style.display = "none";
-          signinForm.style.display = "block";
+          signinContainer.style.display = "block";
           // setTimeout(() => {
           //   loadingOverlay?.classList.remove("active");
           //   window.location.href = "signin.html"; // Redirect to signin page
@@ -269,13 +269,13 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           verifyMessage.textContent = data.message || "Verification failed. Try again.";
           verifyMessage.style.color = "red";
-          signinForm.style.display = "none"; // ✅ Keep login form hidden on failure
+          signinContainer.style.display = "none"; // ✅ Keep login form hidden on failure
           loadingOverlay?.classList.remove("active");
         }
       } catch (err) {
         verifyMessage.textContent = "❌ Server error. Try again later.";
         verifyMessage.style.color = "red";
-        signinForm.style.display = "none"; // ✅ Keep login form hidden on error
+        signinContainer.style.display = "none"; // ✅ Keep login form hidden on error
         console.error("Fetch error:", err); // ✅ Debug log
         loadingOverlay?.classList.remove("active");
       } finally {
@@ -367,6 +367,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ✅ Signin form submit
   if (signinForm) {
+    console.log("signinForm found, initializing forgot password logic");
     signinForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = document.getElementById("email").value;
@@ -401,9 +402,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const result = await response.json();
         if (response.status === 200) {
           messageEl.textContent = "Login successful! Redirecting...";
+          messageEl.style.color = "#66BB6A"; // ✅ you forgot `.style`
           localStorage.setItem("userId", result.user.id);
-          localStorage.setItem("userEmail", result.user.email);
-          localStorage.setItem("userName", result.user.name);
+          // localStorage.setItem("userEmail", result.user.email);
+          // localStorage.setItem("userName", result.user.name);
+            localStorage.setItem("profileData", JSON.stringify(result.user));
+
           setTimeout(() => {
             window.location.href = "dashboard1.html";
           }, 1200);
@@ -437,11 +441,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const verifyOtpBtn = document.getElementById("verifyOtpBtn");
     const resetPasswordBtn = document.getElementById("resetPasswordBtn");
 
+      console.log("Forgot Password DOMs", forgotLink, forgotStep1);
+     
+// etc.
+
     // ✅ Step 0: When "Forgot Password?" is clicked
     forgotLink?.addEventListener("click", (e) => {
       e.preventDefault();
-      document.getElementById("signinForm").style.display = "none";
-      forgotStep1.style.display = "block";
+//       document.getElementById("signinContainer").style.display = "none";
+//       forgotStep1.style.display = "block";
+//       forgotStep1.style.height = "auto"; // 👈 forces it to grow naturally
+// forgotStep1.style.width = "100%"; 
+signinForm.style.display = "none";
+        forgotStep1.style.display = "block";
+        console.log("Forgot password step 1 displayed");
     });
 
     // ✅ Step 1: Request OTP

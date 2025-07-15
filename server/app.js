@@ -6,6 +6,7 @@ const path = require('path');
 const session = require('express-session');  // ✅ Session middleware for auth
 const passport = require('passport');        // ✅ Passport for OAuth
 require('./config/passport');                // ✅ Load Passport config (Google + Facebook)
+const authenticateToken = require('./middleware/authMiddleware'); // ✅ adjust path if needed
 
 const dataRoutes = require('./routes/dataRoutes');
 
@@ -28,7 +29,18 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // ✅ Main API routes
-app.use('/api', dataRoutes);
+// app.use('/api', dataRoutes);
+app.use('/api/request-password-reset', dataRoutes);
+app.use('/api/verify-password-reset-otp', dataRoutes);
+app.use('/api/reset-password', dataRoutes);
+app.use('/api/resend-otp', dataRoutes);
+app.use('/api/signup', dataRoutes);
+app.use('/api/signin', dataRoutes);
+
+app.use('/api/user', authenticateToken, dataRoutes); // ✅ anything like /api/user/:id now requires token
+
+app.use('/api/profile', authenticateToken, dataRoutes);
+
 
 // ✅ Google OAuth Routes
 app.get('/auth/google',
