@@ -212,6 +212,88 @@ document.getElementById('resendOtp')?.addEventListener('click', async function (
 document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("load", createAirBubbles);
 
+  // ✅ Tab switching functionality for Choose Your ARC section
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  const productDetails = document.getElementById('product-details');
+  
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Remove active class from all tabs
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      // Add active class to clicked tab
+      button.classList.add('active');
+      
+      const model = button.getAttribute('data-model');
+      updateProductDetails(model);
+    });
+  });
+
+  // Function to update product details based on selected model
+  function updateProductDetails(model) {
+    const productInfo = productDetails.querySelector('.product-info');
+    const productImage = productDetails.querySelector('.product-image img');
+    
+    switch(model) {
+      case 'arc-pro':
+        productImage.src = 'assets/arcpro.jpeg';
+        productImage.alt = 'ARC Pro';
+        productInfo.innerHTML = `
+          <h3>ARC Pro</h3>
+          <p>Our flagship model with advanced purification technology for large spaces. Designed for homes and offices up to 1,200 sq.ft.</p>
+          <div class="price"><del>₹41,499</del> ₹40,999</div>
+          <div class="features">
+            <div class="feature"><i class="fas fa-sync-alt"></i> 360° Purification</div>
+            <div class="feature"><i class="fas fa-shield-alt"></i> HEPA-13 Filter</div>
+            <div class="feature"><i class="fas fa-lightbulb"></i> Smart Sensing</div>
+            <div class="feature"><i class="fas fa-mobile-alt"></i> App Control</div>
+          </div>
+          <div class="action-buttons">
+            <button class="buy-btn" data-model="arc-pro" onclick="openSignupPage()">Buy Now</button>
+            <button class="learn-btn">Learn More</button>
+          </div>
+        `;
+        break;
+      case 'arc-air':
+        productImage.src = 'assets/arcair.jpeg';
+        productImage.alt = 'ARC Air';
+        productInfo.innerHTML = `
+          <h3>ARC Air</h3>
+          <p>Perfect balance of performance and value for medium-sized spaces. Ideal for apartments and small offices up to 800 sq.ft.</p>
+          <div class="price"><del>₹29,999</del> ₹28,999</div>
+          <div class="features">
+            <div class="feature"><i class="fas fa-sync-alt"></i> 360° Purification</div>
+            <div class="feature"><i class="fas fa-shield-alt"></i> HEPA-12 Filter</div>
+            <div class="feature"><i class="fas fa-lightbulb"></i> Smart Sensing</div>
+            <div class="feature"><i class="fas fa-mobile-alt"></i> App Control</div>
+          </div>
+          <div class="action-buttons">
+            <button class="buy-btn" data-model="arc-air" onclick="openSignupPage()">Buy Now</button>
+            <button class="learn-btn">Learn More</button>
+          </div>
+        `;
+        break;
+      case 'arc-mini':
+        productImage.src = 'assets/arcmini.jpeg';
+        productImage.alt = 'ARC Mini';
+        productInfo.innerHTML = `
+          <h3>ARC Mini</h3>
+          <p>Compact and portable air purifier for small spaces. Perfect for bedrooms, study rooms, and personal spaces up to 400 sq.ft.</p>
+          <div class="price"><del>₹16,999</del> ₹16,499</div>
+          <div class="features">
+            <div class="feature"><i class="fas fa-sync-alt"></i> 360° Purification</div>
+            <div class="feature"><i class="fas fa-shield-alt"></i> HEPA-11 Filter</div>
+            <div class="feature"><i class="fas fa-lightbulb"></i> Basic Sensing</div>
+            <div class="feature"><i class="fas fa-mobile-alt"></i> Manual Control</div>
+          </div>
+          <div class="action-buttons">
+            <button class="buy-btn" data-model="arc-mini" onclick="openSignupPage()">Buy Now</button>
+            <button class="learn-btn">Learn More</button>
+          </div>
+        `;
+        break;
+    }
+  }
+
   const signupForm = document.getElementById("signupForm");
   const signinForm = document.getElementById("signinForm");
   const signinContainer = document.getElementById("signinContainer");

@@ -987,6 +987,8 @@
           if (res.ok) {
             setProfileData(data.user);
             localStorage.setItem("profileData", JSON.stringify(data.user));
+            localStorage.setItem('token', data.token);
+    localStorage.setItem('userId', data.user.id);
             alert("✅ Profile updated successfully!");
           } else {
             alert("❌ Update failed: " + data.message);

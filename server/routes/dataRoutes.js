@@ -232,15 +232,15 @@ router.post('/verify-human', async (req, res) => {
 
   // Generate and store a session token with minimal required fields
   const token = crypto.randomBytes(16).toString('hex');
-  const expiry = new Date(now + 15 * 60 * 1000); // 15-minute expiry
+  // const expiry = new Date(now + 15 * 60 * 1000); // 15-minute expiry
 
-  const user = new User({
-    name: 'VerificationUser', // Dummy name to satisfy required field
-    email: `verify-${token}@example.com`, // Dummy email to satisfy required field
-    humanToken: token,
-    humanTokenExpires: expiry,
-  });
-  await user.save();
+  // const user = new User({
+  //   name: 'VerificationUser', // Dummy name to satisfy required field
+  //   email: `verify-${token}@example.com`, // Dummy email to satisfy required field
+  //   humanToken: token,
+  //   humanTokenExpires: expiry,
+  // });
+  // await user.save();
 
   res.status(200).json({ message: 'Verification successful', token });
 });
@@ -273,12 +273,14 @@ router.post('/signin', async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found" });
 
+    if (!user.password) {
+      return res.status(400).json({ message: 'This account uses Google authentication. Please use Google sign-in.' });
+    }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
 
     // ✅ Add JWT or session logic here
-const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
+const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.status(200).json({
       message: "Login successful",
       token,

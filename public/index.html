@@ -24,18 +24,6 @@
                 </div>
                 
                 <div class="nav-buttons">
-                    <button class="cart-btn" id="cart-btn">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="cart-count" id="cart-count">0</span>
-                    </button>
-                    <div class="cart-dropdown" id="cart-dropdown">
-                        <div class="cart-content">
-                            <h3>Your Cart</h3>
-                            <div class="cart-items" id="cart-items"></div>
-                            <p class="empty-cart" id="empty-cart">Your cart is empty.</p>
-                            <button class="checkout-btn" id="checkout-btn" disabled>Checkout</button>
-                        </div>
-                    </div>
                     <button class="shop-btn" id="btn1" onclick="openSignupPage()">SignUp</button>
                     <button class="shop-btn" id="btn2" onclick="openSigninPage()">SignIn</button>
                 </div>
@@ -80,8 +68,8 @@
                         <div class="feature"><i class="fas fa-mobile-alt"></i> App Control</div>
                     </div>
                     <div class="action-buttons">
-                        <button class="buy-btn" data-model="arc-pro" onclick="openwaitlist()">Buy Now</button>
-                        <button class="learn-btn">Learn More</button>
+                        <button class="buy-btn" data-model="arc-pro" onclick="openSignupPage()">Buy Now</button>
+                        <!-- <button class="learn-btn">Learn More</button> -->
                     </div>
                 </div>
             </div>
@@ -275,8 +263,8 @@
         <h1>Experience ARC</h1>
         <p>Transform your living space with cleaner, fresher air. The future of air purification is here.</p>
         <div class="buttons">
-            <a href="#" class="shop-now" onclick="openwaitlist()">Shop Now</a>
-            <a href="#" class="learn-more">Learn More</a>
+            <a href="#" class="shop-now" onclick="openSignupPage()">Shop Now</a>
+            <!-- <a href="#" class="learn-more">Learn More</a> -->
         </div>
     </div>
 
@@ -308,13 +296,13 @@
     </div>
 
     <!-- Footer Bottom -->
-    <div class="footer-bottom">
-        <div class="copyright">© 2023 ARC. All rights reserved.</div>
-        <div class="social-icons">
+    <div class="footer-bottom" style="display: flex; justify-content: center;">
+        <div class="copyright" >© 2025 ARC. All rights reserved.</div>
+        <!-- <div class="social-icons">
             <a href="#"><i class="fab fa-facebook-f"></i></a>
             <a href="#"><i class="fab fa-instagram"></i></a>
             <a href="#"><i class="fab fa-x-twitter"></i></a>
-        </div>
+        </div> -->
     </div>
 
     <script src="scripts.js"></script>
