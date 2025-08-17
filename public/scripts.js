@@ -1,6 +1,4 @@
 // ✅ Air bubble animation
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
 function createAirBubbles() {
   const container = document.getElementById("air-visualization");
   const bubbleCount = 15;
@@ -86,11 +84,11 @@ function openSigninPage() {
 
 // ✅ Social Login Handlers (Google + Facebook)
 document.getElementById("googleLoginBtn")?.addEventListener("click", () => {
-  window.location.href = "${API_URL}/auth/google"; // Redirect to Google OAuth
+  window.location.href = "http://localhost:5000/auth/google"; // Redirect to Google OAuth
 });
 
 document.getElementById("facebookLoginBtn")?.addEventListener("click", () => { // ✅ NEW: Facebook Login handler
-  window.location.href = "${API_URL}/auth/facebook"; // Redirect to Facebook OAuth
+  window.location.href = "http://localhost:5000/auth/facebook"; // Redirect to Facebook OAuth
 });
 
 document.getElementById("appleLoginBtn")?.addEventListener("click", () => { // ✅ NEW: Apple Login handler
@@ -124,7 +122,7 @@ document.getElementById("otpForm")?.addEventListener("submit", async (e) => {
   messageEl.textContent = "Verifying OTP...";
 
   try {
-    const res = await fetch("${API_URL}/api/verify-otp", {
+    const res = await fetch("http://localhost:5000/api/verify-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, otp }),
@@ -189,7 +187,7 @@ document.getElementById('resendOtp')?.addEventListener('click', async function (
   messageEl.style.color = "#888";
 
   try {
-    const res = await fetch("${API_URL}/api/resend-otp", {
+    const res = await fetch("http://localhost:5000/api/resend-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -330,7 +328,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
       try {
-        const res = await fetch("${API_URL}/api/verify-human", {
+        const res = await fetch("http://localhost:5000/api/verify-human", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ delay }),
@@ -425,7 +423,7 @@ document.addEventListener("DOMContentLoaded", () => {
       };
 
       try {
-        const response = await fetch("${API_URL}/api/signup", {
+        const response = await fetch("http://localhost:5000/api/signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
@@ -478,7 +476,7 @@ document.addEventListener("DOMContentLoaded", () => {
       loadingOverlay.classList.add("active");
 
       try {
-        const response = await fetch("${API_URL}/api/signin", {
+        const response = await fetch("http://localhost:5000/api/signin", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
@@ -557,7 +555,7 @@ signinForm.style.display = "none";
       message1.style.color = "#888";
 
       try {
-        const res = await fetch("${API_URL}/api/request-password-reset", {
+        const res = await fetch("http://localhost:5000/api/request-password-reset", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email }),
@@ -602,7 +600,7 @@ signinForm.style.display = "none";
       }
 
       try {
-        const res = await fetch("${API_URL}/api/verify-password-reset-otp", {
+        const res = await fetch("http://localhost:5000/api/verify-password-reset-otp", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, otp }),
@@ -645,7 +643,7 @@ signinForm.style.display = "none";
       }
 
       try {
-        const res = await fetch("${API_URL}/api/reset-password", {
+        const res = await fetch("http://localhost:5000/api/reset-password", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, newPassword }),
@@ -685,7 +683,7 @@ signinForm.style.display = "none";
       msg.style.color = "#888";
 
       try {
-        const res = await fetch("${API_URL}/api/request-password-reset", {
+        const res = await fetch("http://localhost:5000/api/request-password-reset", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email }),
