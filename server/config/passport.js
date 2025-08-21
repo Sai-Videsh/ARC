@@ -2,7 +2,7 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy; // ✅ NEW: Import Facebook Strategy
 const User = require('../models/User');
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const apiUrl = process.env.API_URL;
 
 // 🧠 Serialize user (store user id in session)
 passport.serializeUser((user, done) => {
@@ -23,7 +23,7 @@ passport.deserializeUser(async (id, done) => {
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: '/auth/google/callback'
+  callbackURL: `${apiUrl}/auth/google/callback`
 },
 async (accessToken, refreshToken, profile, done) => {
   try {
@@ -53,7 +53,7 @@ async (accessToken, refreshToken, profile, done) => {
 passport.use(new FacebookStrategy({
   clientID: process.env.FACEBOOK_APP_ID,
   clientSecret: process.env.FACEBOOK_APP_SECRET,
-  callbackURL: '${apiUrl}/auth/facebook/callback',
+  callbackURL: `${apiUrl}/auth/facebook/callback`,
   profileFields: ['id', 'displayName', 'emails'], // Request name and email
 },
 async (accessToken, refreshToken, profile, done) => {
