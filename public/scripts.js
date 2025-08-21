@@ -1,4 +1,5 @@
-const apiUrl = "http://localhost:5000";
+// const apiUrl = "http://localhost:5000";
+const apiUrl = "https://arc-tf9r.onrender.com";
 
 // ✅ Air bubble animation
 function createAirBubbles() {
