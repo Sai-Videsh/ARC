@@ -30,46 +30,51 @@ function generateOTP() {
 router.post('/signup', async (req, res) => {
   console.log('Signup request body:', req.body);
   const { name, phone, email, password, address } = req.body;
-  console.log('Checking existing user with email:', email);
-  if (!email) {
-    return res.status(400).json({ message: 'Email is required' });
+  try {
+    console.log('Checking existing user with email:', email);
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+    const existingUser = await User.findOne({ email });
+    console.log('Existing user:', existingUser);
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+    console.log('Hashing password...');
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const otp = generateOTP();
+    console.log('Generated OTP:', otp);
+    console.log('Creating new user...');
+    const user = new User({
+      name,
+      phone,
+      email: email.trim().toLowerCase(),  // 🔥 force lowercase
+      password: hashedPassword,
+      address,
+      otp,
+      otpExpires: new Date(Date.now() + 10 * 60 * 1000),
+      isVerified: false
+    });
+    console.log('Saving user...');
+    await user.save();
+    console.log('User saved, sending email...');
+    if (!process.env.GMAIL_USER || !process.env.GMAIL_PASS) {
+      if(!process.env.GMAIL_PASS) console.log("Passeord is missing")
+      else console.error('Error: GMAIL_USER or GMAIL_PASS missing in .env');
+      return res.status(500).json({ message: 'Email configuration error' });
+    }
+    await transporter.sendMail({
+      from: 'youremail@gmail.com',
+      to: email,
+      subject: 'Your OTP Verification Code',
+      html: `<h3>Your OTP is: ${otp}</h3><p>This will expire in 10 minutes.</p>`,
+    });
+    console.log('Email sent');
+    res.status(201).json({ message: 'User registered successfully' });
+  } catch (error) {
+    console.error('Signup error:', error.message, error.stack);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
-  const existingUser = await User.findOne({ email });
-  console.log('Existing user:', existingUser);
-  if (existingUser) {
-    return res.status(400).json({ message: 'User already exists' });
-  }
-  console.log('Hashing password...');
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const otp = generateOTP();
-  console.log('Generated OTP:', otp);
-  console.log('Creating new user...');
-  const user = new User({
-    name,
-    phone,
-    email: email.trim().toLowerCase(),  // 🔥 force lowercase
-    password: hashedPassword,
-    address,
-    otp,
-    otpExpires: new Date(Date.now() + 10 * 60 * 1000),
-    isVerified: false
-  });
-  console.log('Saving user...');
-  await user.save();
-  console.log('User saved, sending email...');
-  if (!process.env.GMAIL_USER || !process.env.GMAIL_PASS) {
-    if(!process.env.GMAIL_PASS) console.log("Passeord is missing")
-    else console.error('Error: GMAIL_USER or GMAIL_PASS missing in .env');
-    return res.status(500).json({ message: 'Email configuration error' });
-  }
-  await transporter.sendMail({
-    from: 'youremail@gmail.com',
-    to: email,
-    subject: 'Your OTP Verification Code',
-    html: `<h3>Your OTP is: ${otp}</h3><p>This will expire in 10 minutes.</p>`,
-  });
-  console.log('Email sent');
-  res.status(201).json({ message: 'User registered successfully' });
 });
 
 router.post('/verify-otp', async (req, res) => {
